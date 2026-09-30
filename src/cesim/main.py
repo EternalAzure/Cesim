@@ -176,6 +176,17 @@ def read_product_asia(coln:int) -> Product:
     
     variable_unit_cost = round(float(SHEET.cell(78, coln).value), 2)
 
+    # Awareness & Intentions
+    households_awareness = round(float(SHEET.cell(85, coln).value), 2)
+    high_end_households_awareness = round(float(SHEET.cell(86, coln).value), 2)
+    companies_awareness = round(float(SHEET.cell(87, coln).value), 4)
+    high_end_companies_awareness = round(float(SHEET.cell(88, coln).value), 2)
+    
+    households_intention = round(float(SHEET.cell(97, coln).value), 2)
+    high_end_households_intention = round(float(SHEET.cell(98, coln).value), 2)
+    companies_intention = round(float(SHEET.cell(99, coln).value), 4)
+    high_end_companies_intention = round(float(SHEET.cell(100, coln).value), 2)
+
     product = Product(
         name,
         company,
@@ -202,7 +213,15 @@ def read_product_asia(coln:int) -> Product:
         display,
         resistance,
         security,
-        design
+        design,
+        households_awareness,
+        high_end_households_awareness,
+        companies_awareness,
+        high_end_companies_awareness,
+        households_intention,
+        high_end_households_intention,
+        companies_intention,
+        high_end_companies_intention
     )
 
 
@@ -243,12 +262,12 @@ def main() -> None:
     #analyse_europe.design_feature()
     
     # 3) Löydä hinnan suhde kysyntään
-    #analyse_europe.price()
+    analyse_europe.price()
     #analyse_europe.all_performance_per_euro()
     #analyse_europe.all_battery_per_euro()
-    analyse_europe.median()
 
     # 4) Löydä suhteellisen hinnan suhde kysyntään
+    #analyse_europe.median()
 
 
     # 5) Löydä tehon ja akun suhde kysyntään
