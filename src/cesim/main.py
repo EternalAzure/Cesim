@@ -254,28 +254,35 @@ def main() -> None:
 
 
     # -- ALOITA TÄSTÄ -- #
-    # 1) Löydä suosituimmat tyylit
-    #analyse_europe.design()
+    # Löydä suosituimmat tyylit
+    analyse_europe.design()
 
-    # 2) Löydä suosituimmat ominaisuudet
+    # Löydä suosituimmat ominaisuudet
     #analyse_europe.feature()
     #analyse_europe.design_feature()
     
-    # 3) Löydä hinnan suhde kysyntään
-    analyse_europe.price()
+    # Löydä tehon ja akun suhde kysyntään
+    #analyse_europe.performance()
+    #analyse_europe.battery()
+
+    #analyse_europe.performance_per_euro()
+    #analyse_europe.battery_per_euro()
+
+
+    # Löydä hinnan suhde kysyntään
+    #analyse_europe.price()
     #analyse_europe.all_performance_per_euro()
     #analyse_europe.all_battery_per_euro()
 
-    # 4) Löydä suhteellisen hinnan suhde kysyntään
+    # Löydä suhteellisen hinnan suhde kysyntään
     #analyse_europe.median()
 
 
-    # 5) Löydä tehon ja akun suhde kysyntään
-    # 6) Löydä tehon ja akun hinnan suhde kysyntään
-    # 7) Löydä suosituimmat puhelimet ryhmittäin
-    # 8) Löydä markkinoinnin vaikutus tunnettavuuteen
-    # 9) Löydä tunnettavuuden vaikutus kysyntään
-    # 10) Mallinnan kysyntä
+    # Löydä tehon ja akun hinnan suhde kysyntään
+    # Löydä suosituimmat puhelimet ryhmittäin
+    # Löydä markkinoinnin vaikutus tunnettavuuteen
+    # Löydä tunnettavuuden vaikutus kysyntään
+    # Mallinnan kysyntä
 
 
     
