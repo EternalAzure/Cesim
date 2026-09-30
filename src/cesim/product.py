@@ -41,6 +41,16 @@ class Product:
     security:bool
     design:str
 
+    # Awareness & Intention
+    households_awareness:float
+    high_end_households_awareness:float
+    companies_awareness:float
+    high_end_companies_awareness:float
+    households_intention:float
+    high_end_households_intention:float
+    companies_intention:float
+    high_end_companies_intention:float
+
 
     def __post_init__(self):
         self.households_sales = round(self.households_sales, 2)

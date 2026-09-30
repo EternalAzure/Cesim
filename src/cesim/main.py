@@ -34,90 +34,7 @@ def read_row_float(rown:int, start_coln=1):
 
     return cell_values
 
-
-def read_product(coln:int) -> dict[str, Any]:
-    product_info: dict = {}
-
-    company = str(SHEET.cell(1, coln).value)
-    temp_col = coln
-    while len(company) <= 0:
-        temp_col -= 1
-        company = str(SHEET.cell(1, temp_col).value)
-
-    name = SHEET.cell(2, coln).value
-    price = SHEET.cell(3, coln).value
-
-    # Sales
-    households_sales = round(float(SHEET.cell(6, coln).value), 3)
-    high_end_households_sales = round(float(SHEET.cell(7, coln).value), 3)
-    companies_sales = round(float(SHEET.cell(8, coln).value), 3)
-    high_end_companies_sales = round(float(SHEET.cell(9, coln).value), 3)
-    total_sales = round(float(SHEET.cell(11, coln).value), 3)
-
-    # Sales by distribution channel
-    specialist = round(float(SHEET.cell(14, coln).value), 4)
-    generalist = round(float(SHEET.cell(15, coln).value), 4)
-    online = round(float(SHEET.cell(16, coln).value), 4)
-    
-    # Market share %
-    households_market_share = round(float(SHEET.cell(19, coln).value), 4)
-    high_end_households_market_share = round(float(SHEET.cell(20, coln).value), 4)
-    companies_market_share = round(float(SHEET.cell(21, coln).value), 4)
-    high_end_companies_market_share = round(float(SHEET.cell(22, coln).value), 4)
-    
-    # Marketing
-    advertizing = SHEET.cell(25, coln).value
-    channel_investments = SHEET.cell(26, coln).value
-
-    # Product characteristics
-    performance = int(SHEET.cell(29, coln).value)
-    battery = int(SHEET.cell(30, coln).value)
-    camera = True if SHEET.cell(32, coln).value == "x" else False
-    memory = True if SHEET.cell(33, coln).value == "x" else False
-    display = True if SHEET.cell(34, coln).value == "x" else False
-    resistance = True if SHEET.cell(35, coln).value == "x" else False
-    security = True if SHEET.cell(36, coln).value == "x" else False
-    design = True if SHEET.cell(37, coln).value == "x" else False
-    
-    variable_unit_cost = round(float(SHEET.cell(39, coln).value), 2)
-
-    product_info["company"] = company
-    product_info["name"] = name
-    product_info["price"] = price
-
-    product_info["households_sales"] = households_sales
-    product_info["high_end_households_sales"] = high_end_households_sales
-    product_info["companies_sales"] = companies_sales
-    product_info["high_end_companies_sales"] = high_end_companies_sales
-    product_info["total_sales"] = total_sales
-    
-    product_info["specialist"] = specialist
-    product_info["generalist"] = generalist
-    product_info["online"] = online
-    
-    product_info["households_market_share"] = households_market_share
-    product_info["high_end_households_market_share"] = high_end_households_market_share
-    product_info["companies_market_share"] = companies_market_share
-    product_info["high_end_companies_market_share"] = high_end_companies_market_share
-    
-    product_info["advertizing"] = advertizing
-    product_info["channel_investments"] = channel_investments
-    
-    product_info["performance"] = performance
-    product_info["battery"] = battery
-    product_info["camera"] = camera
-    product_info["memory"] = memory
-    product_info["display"] = display
-    product_info["resistance"] = resistance
-    product_info["security"] = security
-    product_info["design"] = design
-    
-    product_info["variable_unit_cost"] = variable_unit_cost
-
-    return product_info
-
-
-def read_product_p_europe(coln:int) -> Product:
+def read_product_europe(coln:int) -> Product:
 
     company = str(SHEET.cell(1, coln).value)
     temp_col = coln
@@ -162,6 +79,18 @@ def read_product_p_europe(coln:int) -> Product:
     
     variable_unit_cost = round(float(SHEET.cell(39, coln).value), 2)
 
+    # Awareness & Intentions
+    households_awareness = round(float(SHEET.cell(85, coln).value), 2)
+    high_end_households_awareness = round(float(SHEET.cell(86, coln).value), 2)
+    companies_awareness = round(float(SHEET.cell(87, coln).value), 4)
+    high_end_companies_awareness = round(float(SHEET.cell(88, coln).value), 2)
+    
+    households_intention = round(float(SHEET.cell(97, coln).value), 2)
+    high_end_households_intention = round(float(SHEET.cell(98, coln).value), 2)
+    companies_intention = round(float(SHEET.cell(99, coln).value), 4)
+    high_end_companies_intention = round(float(SHEET.cell(100, coln).value), 2)
+    
+
     product = Product(
         name,
         company,
@@ -188,13 +117,21 @@ def read_product_p_europe(coln:int) -> Product:
         display,
         resistance,
         security,
-        design
+        design,
+        households_awareness,
+        high_end_households_awareness,
+        companies_awareness,
+        high_end_companies_awareness,
+        households_intention,
+        high_end_households_intention,
+        companies_intention,
+        high_end_companies_intention
     )
 
 
     return product
 
-def read_product_p_asia(coln:int) -> Product:
+def read_product_asia(coln:int) -> Product:
 
     company = str(SHEET.cell(1, coln).value)
     temp_col = coln
@@ -285,11 +222,11 @@ def main() -> None:
 
     products_europe:list[Product] = []
     for index in product_column_indexes_europe:
-        products_europe.append(read_product_p_europe(index))
+        products_europe.append(read_product_europe(index))
 
     products_asia:list[Product] = []
     for index in product_column_indexes_asia:
-        products_asia.append(read_product_p_asia(index))
+        products_asia.append(read_product_asia(index))
 
     market_europe = Market(products_europe)
     market_asia = Market(products_asia)
