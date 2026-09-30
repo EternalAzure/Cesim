@@ -255,7 +255,7 @@ def main() -> None:
 
     # -- ALOITA TÄSTÄ -- #
     # Löydä suosituimmat tyylit
-    analyse_europe.design()
+    #analyse_europe.design()
 
     # Löydä suosituimmat ominaisuudet
     #analyse_europe.feature()
@@ -264,18 +264,14 @@ def main() -> None:
     # Löydä tehon ja akun suhde kysyntään
     #analyse_europe.performance()
     #analyse_europe.battery()
-
     #analyse_europe.performance_per_euro()
     #analyse_europe.battery_per_euro()
 
-
     # Löydä hinnan suhde kysyntään
-    #analyse_europe.price()
-    #analyse_europe.all_performance_per_euro()
-    #analyse_europe.all_battery_per_euro()
+    analyse_europe.price()
 
     # Löydä suhteellisen hinnan suhde kysyntään
-    #analyse_europe.median()
+    analyse_europe.median()
 
 
     # Löydä tehon ja akun hinnan suhde kysyntään

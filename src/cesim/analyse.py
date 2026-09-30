@@ -157,9 +157,9 @@ class Analyse:
         plt.show()
 
     def group_performance(self, group:Literal["H", "HH", "C", "HC"]):
-        classics = self.market.products_by_design("Classic")
-        avants = self.market.products_by_design("Avant garde")
-        sports = self.market.products_by_design("Sport")
+        classics = self.market.classic().products
+        avants = self.market.avant_garde().products
+        sports = self.market.sport().products
 
         fig, ax = plt.subplots()
         fig.suptitle(TITLE)
@@ -225,9 +225,9 @@ class Analyse:
         plt.show()
 
     def group_battery(self, group:Literal["H", "HH", "C", "HC"]):
-        classics = self.market.products_by_design("Classic")
-        avants = self.market.products_by_design("Avant garde")
-        sports = self.market.products_by_design("Sport")
+        classics = self.market.classic().products
+        avants = self.market.avant_garde().products
+        sports = self.market.sport().products
 
         fig, ax = plt.subplots()
         fig.suptitle(TITLE)
@@ -285,6 +285,8 @@ class Analyse:
         ax.set_ylabel("sales k")
         ax.grid(True)
 
+    # -- SPECS PER EURO -- #
+    
     def performance_per_euro(self):
         self.group_ppe("H")
         self.group_ppe("HH")
@@ -294,9 +296,9 @@ class Analyse:
 
     def all_ppe(self):
         """Performance per euro"""
-        classics = self.market.products_by_design("Classic")
-        avants = self.market.products_by_design("Avant garde")
-        sports = self.market.products_by_design("Sport")
+        classics = self.market.classic().products
+        avants = self.market.avant_garde().products
+        sports = self.market.sport().products
 
         fig, ax = plt.subplots()
         fig.suptitle(TITLE)
@@ -333,9 +335,9 @@ class Analyse:
         plt.show()
 
     def group_ppe(self, group:Literal["H", "HH", "C", "HC"]):
-        classics = self.market.products_by_design("Classic")
-        avants = self.market.products_by_design("Avant garde")
-        sports = self.market.products_by_design("Sport")
+        classics = self.market.classic().products
+        avants = self.market.avant_garde().products
+        sports = self.market.sport().products
 
         fig, ax = plt.subplots()
         fig.suptitle(TITLE)
@@ -402,9 +404,9 @@ class Analyse:
 
     def all_bpe(self):
         """Battery per euro"""
-        classics = self.market.products_by_design("Classic")
-        avants = self.market.products_by_design("Avant garde")
-        sports = self.market.products_by_design("Sport")
+        classics = self.market.classic().products
+        avants = self.market.avant_garde().products
+        sports = self.market.sport().products
 
         fig, ax = plt.subplots()
         fig.suptitle(TITLE)
@@ -442,9 +444,9 @@ class Analyse:
 
     def group_bpe(self, group:Literal["H", "HH", "C", "HC"]):
         """Battery per euro"""
-        classics = self.market.products_by_design("Classic")
-        avants = self.market.products_by_design("Avant garde")
-        sports = self.market.products_by_design("Sport")
+        classics = self.market.classic().products
+        avants = self.market.avant_garde().products
+        sports = self.market.sport().products
 
         fig, ax = plt.subplots()
         fig.suptitle(TITLE)
@@ -515,9 +517,9 @@ class Analyse:
         plt.show()
 
     def all_price(self):
-        classics = self.market.products_by_design("Classic")
-        avants = self.market.products_by_design("Avant garde")
-        sports = self.market.products_by_design("Sport")
+        classics = self.market.classic().products
+        avants = self.market.avant_garde().products
+        sports = self.market.sport().products
 
         fig, ax = plt.subplots()
         fig.suptitle(TITLE)
@@ -551,12 +553,12 @@ class Analyse:
         ax.set_ylabel("sales k")
         ax.grid(True)
 
-        #plt.show()
+
 
     def group_price(self, group:Literal["H", "HH", "C", "HC"]):
-        classics = self.market.products_by_design("Classic")
-        avants = self.market.products_by_design("Avant garde")
-        sports = self.market.products_by_design("Sport")
+        classics = self.market.classic().products
+        avants = self.market.avant_garde().products
+        sports = self.market.sport().products
 
         fig, ax = plt.subplots()
         fig.suptitle(TITLE)
@@ -614,47 +616,55 @@ class Analyse:
         ax.set_ylabel("sales k")
         ax.grid(True)
 
-    def all_ppe_bpe(self):
-        classics = self.market.products_by_design("Classic")
-        avants = self.market.products_by_design("Avant garde")
-        sports = self.market.products_by_design("Sport")
+    # -- RELATIVE PRICE -- #
+
+    def median(self):
+        self.all_median()
+        #self.group_median("H")
+        #self.group_median("HH")
+        #self.group_median("C")
+        #self.group_median("HC")
+        plt.show()
+
+    def all_median(self):
+        classics = self.market.classic().products
+        avants = self.market.avant_garde().products
+        sports = self.market.sport().products
 
         fig, ax = plt.subplots()
         fig.suptitle(TITLE)
 
-        x = [p.battery_per_euro() for p in classics]
-        y = [p.performance_per_euro() for p in classics]
-        scale = [p.total_sales for p in classics]
+        x = [p.price for p in classics]
+        y = [p.total_sales for p in classics]
+        scale = 200
         ax.scatter(x, y, c=f"tab:blue", s=scale, label="Classic",
                 alpha=0.3, edgecolors='none')
 
-        x = [p.battery_per_euro() for p in avants]
-        y = [p.performance_per_euro() for p in avants]
-        scale = [p.total_sales for p in avants]
+        x = [p.price for p in avants]
+        y = [p.total_sales for p in avants]
+        scale = 200
         ax.scatter(x, y, c=f"tab:orange", s=scale, label="Avant garde",
                 alpha=0.3, edgecolors='none')
 
-        x = [p.battery_per_euro() for p in sports]
-        y = [p.performance_per_euro() for p in sports]
-        scale = [p.total_sales for p in sports]
+        x = [p.price for p in sports]
+        y = [p.total_sales for p in sports]
+        scale = 200
         ax.scatter(x, y, c=f"tab:green", s=scale, label="Sport",
                 alpha=0.3, edgecolors='none')
 
+        # Calculate the best-fit line
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        plt.plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
         ax.legend()
-        ax.set_title("Sales")
-        ax.set_xlabel("battery / price")
-        ax.set_ylabel("performance / price")
+        ax.set_title("All Price")
+        ax.set_xlabel("price €")
+        ax.set_ylabel("sales k")
         ax.grid(True)
 
-        plt.show()
-
-    # -- RELATIVE PRICE -- #
-
-    def median(self):
-        pass
-
     # -- ? -- #
-    
+
     def margin_x_sales(self):
         source = self.market.products
         source.sort(key=lambda p: p.margin())
