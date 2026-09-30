@@ -13,6 +13,42 @@ class Market:
     def products_by_design(self, design:Literal["Classic", "Avant garde", "Sport"]):
         return [p for p in self.products if p.design == design]
 
+    def products_by_performance(self, min:int|None, max:int|None):
+        all_products = self.products.copy()
+        all_products.sort(key=lambda p: p.performance)
+        if min is None and max is None: return all_products
+        if min is None and isinstance(max, int): return [p for p in all_products if p.performance <= max]
+        if isinstance(min, int) and max is None: return [p for p in all_products if p.performance >= min]
+        if isinstance(min, int) and isinstance(max, int):
+            return [p for p in all_products if p.performance >= min and p.performance <= max]
+        raise ValueError(f"min and max should be int|None")
+
+    def products_by_battery(self, min:int|None, max:int|None):
+        all_products = self.products.copy()
+        all_products.sort(key=lambda p: p.battery)
+        if min is None and max is None: return all_products
+        if min is None and isinstance(max, int): return [p for p in all_products if p.battery <= max]
+        if isinstance(min, int) and max is None: return [p for p in all_products if p.battery >= min]
+        if isinstance(min, int) and isinstance(max, int):
+            return [p for p in all_products if p.battery >= min and p.battery <= max]
+        raise ValueError(f"min and max should be int|None")
+    
+    def downscale_products(self):
+        average = self.average_price()
+        results = [p for p in self.products if p.price < average and p.price >= average * 0.75]
+        return results
+
+    def upscale_products(self):
+        average = self.average_price()
+        results = [p for p in self.products if p.price > average and p.price <= average * 1.25]
+        return results
+
+    def high_upscale_products(self):
+        average = self.average_price()
+        results = [p for p in self.products if p.price > 1.25 * average]
+        return results
+
+
 
     # -- PRICES -- #
     def min_price(self) -> float:
