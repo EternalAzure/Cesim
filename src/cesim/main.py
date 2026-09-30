@@ -177,15 +177,15 @@ def read_product_asia(coln:int) -> Product:
     variable_unit_cost = round(float(SHEET.cell(78, coln).value), 2)
 
     # Awareness & Intentions
-    households_awareness = round(float(SHEET.cell(85, coln).value), 2)
-    high_end_households_awareness = round(float(SHEET.cell(86, coln).value), 2)
-    companies_awareness = round(float(SHEET.cell(87, coln).value), 4)
-    high_end_companies_awareness = round(float(SHEET.cell(88, coln).value), 2)
+    households_awareness = round(float(SHEET.cell(104, coln).value), 2)
+    high_end_households_awareness = round(float(SHEET.cell(105, coln).value), 2)
+    companies_awareness = round(float(SHEET.cell(106, coln).value), 4)
+    high_end_companies_awareness = round(float(SHEET.cell(107, coln).value), 2)
     
-    households_intention = round(float(SHEET.cell(97, coln).value), 2)
-    high_end_households_intention = round(float(SHEET.cell(98, coln).value), 2)
-    companies_intention = round(float(SHEET.cell(99, coln).value), 4)
-    high_end_companies_intention = round(float(SHEET.cell(100, coln).value), 2)
+    households_intention = round(float(SHEET.cell(110, coln).value), 2)
+    high_end_households_intention = round(float(SHEET.cell(111, coln).value), 2)
+    companies_intention = round(float(SHEET.cell(112, coln).value), 4)
+    high_end_companies_intention = round(float(SHEET.cell(113, coln).value), 2)
 
     product = Product(
         name,
