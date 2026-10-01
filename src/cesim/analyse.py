@@ -963,6 +963,460 @@ class Analyse:
         ax.set_ylabel("sales k")
         ax.legend(loc="upper right")
 
+  
+    def advertizing_relook(self):
+        self.ad_relook_hc()
+        self.ad_relook_hh()
+        self.ad_relook_h()
+        plt.show()
+
+    def ad_relook_hc(self):
+        source = self.market.products.copy()
+        source.sort(key=lambda p: p.advertizing)
+
+        fig, ax = plt.subplots(2,2)
+        fig.suptitle(self.title)
+
+        # 1
+        x = [p for p in source if p.battery >= self.market.stats.average_battery()]
+        x = [p for p in x if p.security]
+        y = [p.high_end_companies_sales for p in x]
+        x = [p.advertizing for p in x]
+        ax[0,0].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[0,0].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[0,0].set_title("Security + Good Battery")
+        ax[0,0].set_xlabel("advertizing €")
+        ax[0,0].set_ylabel("sales k")
+        ax[0,0].set_ylim(0)
+
+        # 2
+        x = [p for p in source if p.battery <= self.market.stats.average_battery()]
+        x = [p for p in x if not p.security]
+        y = [p.high_end_companies_sales for p in x]
+        x = [p.advertizing for p in x]
+        ax[1,0].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[1,0].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[1,0].set_title("No Security + Bad Battery")
+        ax[1,0].set_xlabel("advertizing €")
+        ax[1,0].set_ylabel("sales k")
+        ax[1,0].set_ylim(0)
+
+        # 3
+        x = [p for p in source if p.battery_per_euro() >= self.market.stats.average_bpe()]
+        x = [p for p in x if p.security]
+        y = [p.high_end_companies_sales for p in x]
+        x = [p.advertizing for p in x]
+        ax[0,1].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[0,1].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[0,1].set_title("Security + Good BPE")
+        ax[0,1].set_xlabel("advertizing €")
+        ax[0,1].set_ylabel("sales k")
+        ax[0,1].set_ylim(0)
+
+        # 4
+        x = [p for p in source if p.battery_per_euro() <= self.market.stats.average_bpe()]
+        x = [p for p in x if not p.security]
+        y = [p.high_end_companies_sales for p in x]
+        x = [p.advertizing for p in x]
+        ax[1,1].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[1,1].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[1,1].set_title("No Security + Bad BPE")
+        ax[1,1].set_xlabel("advertizing €")
+        ax[1,1].set_ylabel("sales k")
+        ax[1,1].set_ylim(0)
+
+        fig.tight_layout()
+  
+    def ad_relook_hh(self):
+        source = self.market.products.copy()
+        source.sort(key=lambda p: p.advertizing)
+
+        fig, ax = plt.subplots(2,2)
+        fig.suptitle(self.title)
+
+        # 1
+        x = [p for p in source if p.performance >= self.market.stats.average_performance()]
+        x = [p for p in x if p.camera]
+        y = [p.high_end_households_sales for p in x]
+        x = [p.advertizing for p in x]
+        ax[0,0].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[0,0].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[0,0].set_title("Camera + Good Performance")
+        ax[0,0].set_xlabel("advertizing €")
+        ax[0,0].set_ylabel("sales k")
+        ax[0,0].set_ylim(0)
+
+        # 2
+        x = [p for p in source if p.performance <= self.market.stats.average_performance()]
+        x = [p for p in x if not p.camera or not p.memory]
+        y = [p.high_end_households_sales for p in x]
+        x = [p.advertizing for p in x]
+        ax[1,0].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[1,0].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[1,0].set_title("No C/M + Bad Performance")
+        ax[1,0].set_xlabel("advertizing €")
+        ax[1,0].set_ylabel("sales k")
+        ax[1,0].set_ylim(0)
+
+        # 3
+        x = [p for p in source if p.performance_per_euro() >= self.market.stats.average_ppe()]
+        x = [p for p in x if p.camera]
+        y = [p.high_end_households_sales for p in x]
+        x = [p.advertizing for p in x]
+        ax[0,1].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[0,1].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[0,1].set_title("Camera + Good PPE")
+        ax[0,1].set_xlabel("advertizing €")
+        ax[0,1].set_ylabel("sales k")
+        ax[0,1].set_ylim(0)
+
+        # 4
+        x = [p for p in source if p.performance_per_euro() <= self.market.stats.average_ppe()]
+        x = [p for p in x if not p.camera or not p.memory]
+        y = [p.high_end_households_sales for p in x]
+        x = [p.advertizing for p in x]
+        ax[1,1].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[1,1].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[1,1].set_title("No C/M + Bad PPE")
+        ax[1,1].set_xlabel("advertizing €")
+        ax[1,1].set_ylabel("sales k")
+        ax[1,1].set_ylim(0)
+
+        fig.tight_layout()
+
+    def ad_relook_h(self):
+        source = self.market.products.copy()
+        source.sort(key=lambda p: p.advertizing)
+
+        fig, ax = plt.subplots(2,2)
+        fig.suptitle(self.title)
+
+        # 1
+        x = [p for p in source if p.price <= self.market.households().stats.average_price()]
+        x = [p for p in x if p.camera]
+        y = [p.households_sales for p in x]
+        x = [p.advertizing for p in x]
+        ax[0,0].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[0,0].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[0,0].set_title("Camera + Cheap")
+        ax[0,0].set_xlabel("advertizing €")
+        ax[0,0].set_ylabel("sales k")
+        ax[0,0].set_ylim(0)
+
+        # 2
+        x = [p for p in source if p.price >= self.market.households().stats.average_price()]
+        x = [p for p in x if not p.camera or not p.memory]
+        y = [p.households_sales for p in x]
+        x = [p.advertizing for p in x]
+        ax[1,0].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[1,0].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[1,0].set_title("No C/M + Expensive")
+        ax[1,0].set_xlabel("advertizing €")
+        ax[1,0].set_ylabel("sales k")
+        ax[1,0].set_ylim(0)
+
+        # 3
+        x = [p for p in source if p.performance_per_euro() >= self.market.stats.average_ppe()]
+        x = [p for p in x if p.camera]
+        y = [p.households_sales for p in x]
+        x = [p.advertizing for p in x]
+        ax[0,1].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[0,1].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[0,1].set_title("Camera + Good PPE")
+        ax[0,1].set_xlabel("advertizing €")
+        ax[0,1].set_ylabel("sales k")
+        ax[0,1].set_ylim(0)
+
+        # 4
+        x = [p for p in source if p.performance_per_euro() <= self.market.stats.average_ppe()]
+        x = [p for p in x if not p.camera or not p.memory]
+        y = [p.households_sales for p in x]
+        x = [p.advertizing for p in x]
+        ax[1,1].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[1,1].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[1,1].set_title("No C/M + Bad PPE")
+        ax[1,1].set_xlabel("advertizing €")
+        ax[1,1].set_ylabel("sales k")
+        ax[1,1].set_ylim(0)
+
+        fig.tight_layout()
+  
+
+    # -- CHANNEL INVESTMENTS -- #
+    def channel_investments(self):
+        self.channel_investments_hc()
+        self.channel_investments_hh()
+        self.channel_investments_h()
+        plt.show()
+
+    def channel_investments_hc(self):
+        source = self.market.products.copy()
+        source.sort(key=lambda p: p.channel_investments)
+
+        fig, ax = plt.subplots(2,2)
+        fig.suptitle(self.title)
+
+        # 1
+        x = [p for p in source if p.battery >= self.market.stats.average_battery()]
+        x = [p for p in x if p.security]
+        y = [p.high_end_companies_sales for p in x]
+        x = [p.channel_investments for p in x]
+        ax[0,0].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[0,0].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[0,0].set_title("Security + Good Battery")
+        ax[0,0].set_xlabel("channel investments €")
+        ax[0,0].set_ylabel("sales k")
+        ax[0,0].set_ylim(0)
+
+        # 2
+        x = [p for p in source if p.battery <= self.market.stats.average_battery()]
+        x = [p for p in x if not p.security]
+        y = [p.high_end_companies_sales for p in x]
+        x = [p.channel_investments for p in x]
+        ax[1,0].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[1,0].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[1,0].set_title("No Security + Bad Battery")
+        ax[1,0].set_xlabel("channel investments €")
+        ax[1,0].set_ylabel("sales k")
+        ax[1,0].set_ylim(0)
+
+        # 3
+        x = [p for p in source if p.battery_per_euro() >= self.market.stats.average_bpe()]
+        x = [p for p in x if p.security]
+        y = [p.high_end_companies_sales for p in x]
+        x = [p.channel_investments for p in x]
+        ax[0,1].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[0,1].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[0,1].set_title("Security + Good BPE")
+        ax[0,1].set_xlabel("channel investments €")
+        ax[0,1].set_ylabel("sales k")
+        ax[0,1].set_ylim(0)
+
+        # 4
+        x = [p for p in source if p.battery_per_euro() <= self.market.stats.average_bpe()]
+        x = [p for p in x if not p.security]
+        y = [p.high_end_companies_sales for p in x]
+        x = [p.channel_investments for p in x]
+        ax[1,1].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[1,1].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[1,1].set_title("No Security + Bad BPE")
+        ax[1,1].set_xlabel("channel investments €")
+        ax[1,1].set_ylabel("sales k")
+        ax[1,1].set_ylim(0)
+
+
+        fig.tight_layout()
+  
+    def channel_investments_hh(self):
+        source = self.market.products.copy()
+        source.sort(key=lambda p: p.channel_investments)
+
+        fig, ax = plt.subplots(2,2)
+        fig.suptitle(self.title)
+
+        # 1
+        x = [p for p in source if p.performance >= self.market.stats.average_performance()]
+        x = [p for p in x if p.camera]
+        y = [p.high_end_households_sales for p in x]
+        x = [p.channel_investments for p in x]
+        ax[0,0].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[0,0].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[0,0].set_title("Camera + Good Performance")
+        ax[0,0].set_xlabel("channel investments €")
+        ax[0,0].set_ylabel("sales k")
+        ax[0,0].set_ylim(0)
+
+        # 2
+        x = [p for p in source if p.performance <= self.market.stats.average_performance()]
+        x = [p for p in x if not p.camera or not p.memory]
+        y = [p.high_end_households_sales for p in x]
+        x = [p.channel_investments for p in x]
+        ax[1,0].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[1,0].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[1,0].set_title("No C/M + Bad Performance")
+        ax[1,0].set_xlabel("channel investments €")
+        ax[1,0].set_ylabel("sales k")
+        ax[1,0].set_ylim(0)
+
+        # 3
+        x = [p for p in source if p.performance_per_euro() >= self.market.stats.average_ppe()]
+        x = [p for p in x if p.camera]
+        y = [p.high_end_households_sales for p in x]
+        x = [p.channel_investments for p in x]
+        ax[0,1].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[0,1].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[0,1].set_title("Camera + Good PPE")
+        ax[0,1].set_xlabel("channel investments €")
+        ax[0,1].set_ylabel("sales k")
+        ax[0,1].set_ylim(0)
+
+        # 4
+        x = [p for p in source if p.performance_per_euro() <= self.market.stats.average_ppe()]
+        x = [p for p in x if not p.camera or not p.memory]
+        y = [p.high_end_households_sales for p in x]
+        x = [p.channel_investments for p in x]
+        ax[1,1].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[1,1].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[1,1].set_title("No C/M + Bad PPE")
+        ax[1,1].set_xlabel("channel investments €")
+        ax[1,1].set_ylabel("sales k")
+        ax[1,1].set_ylim(0)
+
+        fig.tight_layout()
+
+    def channel_investments_h(self):
+        source = self.market.products.copy()
+        source.sort(key=lambda p: p.channel_investments)
+
+        fig, ax = plt.subplots(2,2)
+        fig.suptitle(self.title)
+
+        # 1
+        x = [p for p in source if p.price <= self.market.households().stats.average_price()]
+        x = [p for p in x if p.camera]
+        y = [p.households_sales for p in x]
+        x = [p.channel_investments for p in x]
+        ax[0,0].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[0,0].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[0,0].set_title("Camera + Cheap")
+        ax[0,0].set_xlabel("channel investments €")
+        ax[0,0].set_ylabel("sales k")
+        ax[0,0].set_ylim(0)
+
+        # 2
+        x = [p for p in source if p.price >= self.market.households().stats.average_price()]
+        x = [p for p in x if not p.camera or not p.memory]
+        y = [p.households_sales for p in x]
+        x = [p.channel_investments for p in x]
+        ax[1,0].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[1,0].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[1,0].set_title("No C/M + Expensive")
+        ax[1,0].set_xlabel("channel investments €")
+        ax[1,0].set_ylabel("sales k")
+        ax[1,0].set_ylim(0)
+
+        # 3
+        x = [p for p in source if p.performance_per_euro() >= self.market.stats.average_ppe()]
+        x = [p for p in x if p.camera]
+        y = [p.households_sales for p in x]
+        x = [p.channel_investments for p in x]
+        ax[0,1].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[0,1].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[0,1].set_title("Camera + Good PPE")
+        ax[0,1].set_xlabel("channel investments €")
+        ax[0,1].set_ylabel("sales k")
+        ax[0,1].set_ylim(0)
+
+        # 4
+        x = [p for p in source if p.performance_per_euro() <= self.market.stats.average_ppe()]
+        x = [p for p in x if not p.camera or not p.memory]
+        y = [p.households_sales for p in x]
+        x = [p.channel_investments for p in x]
+        ax[1,1].scatter(x, y)
+
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        ax[1,1].plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax[1,1].set_title("No C/M + Bad PPE")
+        ax[1,1].set_xlabel("channel investments €")
+        ax[1,1].set_ylabel("sales k")
+        ax[1,1].set_ylim(0)
+
+        fig.tight_layout()
+  
 
     # -- PROFIT -- #
 

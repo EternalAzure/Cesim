@@ -284,6 +284,8 @@ def main() -> None:
 
     # Löydä markkinoinnin vaikutus
     #analyse_europe.advertizing()
+    #analyse_europe.advertizing_relook()
+    #analyse_europe.channel_investments()
 
     # Löydä voitot
     #analyse_europe.profit()

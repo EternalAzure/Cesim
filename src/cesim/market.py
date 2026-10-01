@@ -88,6 +88,13 @@ class Stats:
 
     def high_battery(self) -> float:
         return (self.max_battery() + self.average_battery()) / 2
+
+    # -- PPE & BPE -- #
+    def average_ppe(self) -> float:
+        return sum([p.performance_per_euro() for p in self.products]) / len(self.products) 
+
+    def average_bpe(self) -> float:
+        return sum([p.battery_per_euro() for p in self.products]) / len(self.products) 
     
 
 class Market:
