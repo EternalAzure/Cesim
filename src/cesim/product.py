@@ -46,6 +46,7 @@ class Product:
     high_end_households_awareness:float
     companies_awareness:float
     high_end_companies_awareness:float
+
     households_intention:float
     high_end_households_intention:float
     companies_intention:float
@@ -67,3 +68,6 @@ class Product:
 
     def battery_per_euro(self):
         return self.battery / self.price
+
+    def total_awareness(self) -> float:
+        return self.households_awareness + self.high_end_households_awareness + self.companies_awareness + self.high_end_companies_awareness

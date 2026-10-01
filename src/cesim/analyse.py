@@ -506,8 +506,6 @@ class Analyse:
         ax.set_ylabel("sales k")
         ax.grid(True)
 
-
-
     # -- PRICE -- #
 
     def price(self):
@@ -715,6 +713,238 @@ class Analyse:
         ax.set_ylabel("sales k")
         ax.set_ylim(0, 150)
         ax.grid(True)
+
+    # ADVERTIZING -- #
+    def advertizing(self):
+        self.all_advertizing()
+        self.all_awareness()
+        self.hh_awareness()
+        self.h_awareness()
+        self.hc_awareness()
+        self.c_awareness()
+        self.awareness_x_sales()
+        plt.show()
+        
+    def all_advertizing(self):
+        source = self.market.products.copy()
+        source.sort(key=lambda p: p.advertizing)
+        x = [p.advertizing for p in source]
+        y = [p.total_sales for p in source]
+
+        fig, ax = plt.subplots()
+        fig.suptitle(self.title)
+
+        ax.plot(x, y)
+        ax.set_title("All Advertizing")
+        ax.set_xlabel("advertizing €")
+        ax.set_ylabel("sales k")
+        
+    def all_awareness(self):
+        source = self.market.products.copy()
+        source.sort(key=lambda p: p.advertizing)
+        x = [p.advertizing for p in source]
+        
+        awareness_h = [p.households_awareness for p in source]
+        awareness_hh = [p.high_end_households_awareness for p in source]
+        awareness_c = [p.companies_awareness for p in source]
+        awareness_hc = [p.high_end_companies_awareness for p in source]
+
+        awareness_counts = {
+            "H": awareness_h,
+            "HH": awareness_hh,
+            "C": awareness_c,
+            "HC": awareness_hc,
+        }
+        width = 60
+
+        fig, ax = plt.subplots()
+        fig.suptitle(self.title)
+
+        bottom = np.zeros(len(x))
+
+        for boolean, awareness_count in awareness_counts.items():
+            p = ax.bar(x, awareness_count, width, label=boolean, bottom=bottom)
+            bottom += awareness_count
+
+        ax.set_title("All Awareness")
+        ax.set_xlabel("advertizing €")
+        ax.set_ylabel("awareness k")
+        ax.legend(loc="upper right")
+        
+    def h_awareness(self):
+        source = self.market.products.copy()
+        source.sort(key=lambda p: p.advertizing)
+        x = [p.advertizing for p in source]
+        
+        awareness_h = [p.households_awareness for p in source]
+        awareness_hh = [p.high_end_households_awareness for p in source]
+        awareness_c = [p.companies_awareness for p in source]
+        awareness_hc = [p.high_end_companies_awareness for p in source]
+
+        awareness_counts = {
+            "H": awareness_h,          
+        }
+        width = 60
+
+        fig, ax = plt.subplots()
+        fig.suptitle(self.title)
+
+        bottom = np.zeros(len(x))
+
+        for boolean, awareness_count in awareness_counts.items():
+            p = ax.bar(x, awareness_count, width, label=boolean, bottom=bottom)
+            bottom += awareness_count
+
+        # Calculate the best-fit line
+        z = np.polyfit(x, awareness_h, 1)
+        p = np.poly1d(z)
+        plt.plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax.set_title("H Awareness")
+        ax.set_xlabel("advertizing €")
+        ax.set_ylabel("awareness k")
+        ax.legend(loc="upper right")
+        
+    def hh_awareness(self):
+        source = self.market.products.copy()
+        source.sort(key=lambda p: p.advertizing)
+        x = [p.advertizing for p in source]
+        
+        awareness_h = [p.households_awareness for p in source]
+        awareness_hh = [p.high_end_households_awareness for p in source]
+        awareness_c = [p.companies_awareness for p in source]
+        awareness_hc = [p.high_end_companies_awareness for p in source]
+
+        awareness_counts = {
+            "HH": awareness_hh,          
+        }
+        width = 60
+
+        fig, ax = plt.subplots()
+        fig.suptitle(self.title)
+
+        bottom = np.zeros(len(x))
+
+        for boolean, awareness_count in awareness_counts.items():
+            p = ax.bar(x, awareness_count, width, label=boolean, bottom=bottom)
+            bottom += awareness_count
+
+        # Calculate the best-fit line
+        z = np.polyfit(x, awareness_hh, 1)
+        p = np.poly1d(z)
+        plt.plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax.set_title("HH Awareness")
+        ax.set_xlabel("advertizing €")
+        ax.set_ylabel("awareness k")
+        ax.legend(loc="upper right")
+        
+    def c_awareness(self):
+        source = self.market.products.copy()
+        source.sort(key=lambda p: p.advertizing)
+        x = [p.advertizing for p in source]
+        
+        awareness_h = [p.households_awareness for p in source]
+        awareness_hh = [p.high_end_households_awareness for p in source]
+        awareness_c = [p.companies_awareness for p in source]
+        awareness_hc = [p.high_end_companies_awareness for p in source]
+
+        awareness_counts = {
+            "C": awareness_c,          
+        }
+        width = 60
+
+        fig, ax = plt.subplots()
+        fig.suptitle(self.title)
+
+        bottom = np.zeros(len(x))
+
+        for boolean, awareness_count in awareness_counts.items():
+            p = ax.bar(x, awareness_count, width, label=boolean, bottom=bottom)
+            bottom += awareness_count
+
+        # Calculate the best-fit line
+        z = np.polyfit(x, awareness_c, 1)
+        p = np.poly1d(z)
+        plt.plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax.set_title("C Awareness")
+        ax.set_xlabel("advertizing €")
+        ax.set_ylabel("awareness k")
+        ax.legend(loc="upper right")
+        
+    def hc_awareness(self):
+        source = self.market.products.copy()
+        source.sort(key=lambda p: p.advertizing)
+        x = [p.advertizing for p in source]
+        
+        awareness_h = [p.households_awareness for p in source]
+        awareness_hh = [p.high_end_households_awareness for p in source]
+        awareness_c = [p.companies_awareness for p in source]
+        awareness_hc = [p.high_end_companies_awareness for p in source]
+
+        awareness_counts = {
+            "HC": awareness_hc,          
+        }
+        width = 60
+
+        fig, ax = plt.subplots()
+        fig.suptitle(self.title)
+
+        bottom = np.zeros(len(x))
+
+        for boolean, awareness_count in awareness_counts.items():
+            p = ax.bar(x, awareness_count, width, label=boolean, bottom=bottom)
+            bottom += awareness_count
+
+        # Calculate the best-fit line
+        z = np.polyfit(x, awareness_hc, 1)
+        p = np.poly1d(z)
+        plt.plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax.set_title("HC Awareness")
+        ax.set_xlabel("advertizing €")
+        ax.set_ylabel("awareness k")
+        ax.legend(loc="upper right")
+        
+    def awareness_x_sales(self):
+        source = self.market.products.copy()
+        source.sort(key=lambda p: p.advertizing)
+        x = [p.total_awareness() for p in source]
+
+        trendline = [p.total_sales for p in source]
+        sales_h = [p.households_sales for p in source]
+        sales_hh = [p.high_end_households_sales for p in source]
+        sales_c = [p.companies_sales for p in source]
+        sales_hc = [p.high_end_companies_sales for p in source]
+
+        sales_counts = {
+            "H": sales_h,
+            "HH": sales_hh,
+            "C": sales_c,
+            "HC": sales_hc,  
+        }
+        width = 60
+
+        fig, ax = plt.subplots()
+        fig.suptitle(self.title)
+
+        bottom = np.zeros(len(x))
+
+        for boolean, sales_count in sales_counts.items():
+            p = ax.bar(x, sales_count, width, label=boolean, bottom=bottom)
+            bottom += sales_count
+
+        # Calculate the best-fit line
+        z = np.polyfit(x, trendline, 1)
+        p = np.poly1d(z)
+        plt.plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        ax.set_title("All Awareness x Sales")
+        ax.set_xlabel("awareness")
+        ax.set_ylabel("sales k")
+        ax.legend(loc="upper right")
+
 
     # -- ? -- #
 
