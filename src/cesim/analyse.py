@@ -615,6 +615,24 @@ class Analyse:
         ax.set_ylim(0)
         ax.grid(True)
 
+    def margin_x_sales(self):
+        source = self.market.products
+        source.sort(key=lambda p: p.margin())
+        x = [p.margin() for p in source]
+        y = [p.total_sales for p in source]
+        
+        fig, ax = plt.subplots()
+        ax.set_ylabel("sales k")
+        ax.set_xlabel("margin €")
+        ax.plot(x, y)
+
+        # Calculate the best-fit line
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        plt.plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        plt.show()
+
     # -- RELATIVE PRICE -- #
 
     def cumulative(self):
@@ -946,35 +964,26 @@ class Analyse:
         ax.legend(loc="upper right")
 
 
-    # -- ? -- #
-
-    def margin_x_sales(self):
-        source = self.market.products
-        source.sort(key=lambda p: p.margin())
-        x = [p.margin() for p in source]
-        y = [p.total_sales for p in source]
-        
-        fig, ax = plt.subplots()
-        ax.set_ylabel("sales k")
-        ax.set_xlabel("margin €")
-        ax.plot(x, y)
-        plt.show()
+    # -- PROFIT -- #
 
     def profit(self):
     
         source = self.market.products.copy()
-        y = [p.margin() * p.total_sales for p in source]
 
         source.sort(key=lambda p: p.price)
+        y = [p.margin() * p.total_sales for p in source]
         x_price = [p.price for p in source]
 
         source.sort(key=lambda p: p.total_sales)
+        y = [p.margin() * p.total_sales for p in source]
         x_sales = [p.total_sales for p in source]
 
         source.sort(key=lambda p: p.margin())
+        y = [p.margin() * p.total_sales for p in source]
         x_margin = [p.margin() for p in source]
 
         source.sort(key=lambda p: abs(p.price - self.market.stats.average_price()))
+        y = [p.margin() * p.total_sales for p in source]
         x_deviance = [abs(p.price - self.market.stats.average_price()) for p in source]
 
 
@@ -985,66 +994,31 @@ class Analyse:
         ax[0,1].plot(x_sales, y); ax[0,1].set_title("Sales"); ax[0,1].set_ylabel("profit"); ax[0,1].set_xlabel("sales k")
         ax[1,0].plot(x_margin, y); ax[1,0].set_title("Margin"); ax[1,0].set_ylabel("profit"); ax[1,0].set_xlabel("margin €")
         ax[1,1].plot(x_deviance, y); ax[1,1].set_title("Deviance"); ax[1,1].set_ylabel("profit"); ax[1,1].set_xlabel("deviance from median price €")
-        #ax[1,1].plot(x, y4); ax[1,1].set_title("Tanh")
+
         fig.tight_layout()
         plt.show()
 
-    def profit_x_price(self):
+    def profit_x_specs(self):
         source = self.market.products
-        source.sort(key=lambda p: p.price)
-        x = [p.price for p in source]
-        y = [p.margin() * p.total_sales for p in source]
-        
-        fig, ax = plt.subplots()
-        ax.set_ylabel("profit")
-        ax.set_xlabel("price")
-        ax.plot(x, y)
-        plt.show()
 
-    def profit_x_sales(self):
-        source = self.market.products
-        source.sort(key=lambda p: p.total_sales)
-        x = [p.total_sales for p in source]
-        y = [p.margin() * p.total_sales for p in source]
-        
-        fig, ax = plt.subplots()
-        ax.set_ylabel("profit")
-        ax.set_xlabel("sales k")
-        ax.plot(x, y)
-        plt.show()
-
-    def profit_x_margin(self):
-        source = self.market.products
-        source.sort(key=lambda p: p.margin())
-        x = [p.margin() for p in source]
-        y = [p.margin() * p.total_sales for p in source]
-        
-        fig, ax = plt.subplots()
-        ax.set_ylabel("profit")
-        ax.set_xlabel("margin")
-        ax.plot(x, y)
-        plt.show()
-
-    def profit_x_performance(self):
-        source = self.market.products
+        # Performance
         source.sort(key=lambda p: p.performance)
         x = [p.performance for p in source]
         y = [p.margin() * p.total_sales for p in source]
         
-        fig, ax = plt.subplots()
-        ax.set_ylabel("profit")
-        ax.set_xlabel("performance")
-        ax.plot(x, y)
-        plt.show()
+        fig, ax = plt.subplots(2)
+        ax[0].set_ylabel("profit")
+        ax[0].set_xlabel("performance")
+        ax[0].plot(x, y)
 
-    def profit_x_battery(self):
-        source = self.market.products
+        # Battery
         source.sort(key=lambda p: p.battery)
         x = [p.battery for p in source]
         y = [p.margin() * p.total_sales for p in source]
-        
-        fig, ax = plt.subplots()
-        ax.set_ylabel("profit")
-        ax.set_xlabel("battery")
-        ax.plot(x, y)
+
+        ax[1].set_ylabel("profit")
+        ax[1].set_xlabel("battery")
+        ax[1].plot(x, y)
+
+        fig.tight_layout()
         plt.show()

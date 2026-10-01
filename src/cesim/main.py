@@ -277,6 +277,7 @@ def main() -> None:
 
     # Löydä hinnan suhde kysyntään
     #analyse_europe.price()
+    #analyse_europe.margin_x_sales()
 
     # Löydä suhteellisen hinnan suhde kysyntään
     #analyse_europe.cumulative()
@@ -284,34 +285,16 @@ def main() -> None:
     # Löydä markkinoinnin vaikutus
     #analyse_europe.advertizing()
 
-    # Löydä suosituimmat puhelimet ryhmittäin
-    
+    # Löydä voitot
+    #analyse_europe.profit()
+    #analyse_europe.profit_x_specs()
 
     # Mallinnan kysyntä
-
-
+    
     
     return
 
-    return
 
-    df = pd.DataFrame(
-        {
-            "Name": [
-                "Braund, Mr. Owen Harris",
-                "Allen, Mr. William Henry",
-                "Bonnell, Miss Elizabeth",
-            ],
-            "Age": [22, 35, 58],
-            "Sex": ["male", "male", "female"],
-        }
-    )
-
-    sales_households = read_row_float(6)
-    sales_high_end_households = read_row_float(7)
-    sales_companies = read_row_float(8)
-    sales_high_end_companies = read_row_float(9)
-    sales_total = read_row_float(11)
 
 
 
