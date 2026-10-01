@@ -3,15 +3,17 @@ import numpy as np
 from typing import Literal
 from random import randint
 
+import itertools
+
 from .market import Market
 
-TITLE = "Round 3"
+
 
 class Analyse:
 
-    def __init__(self, market:Market) -> None:
-        self.market = market
-
+    def __init__(self, market:Market, round:int) -> None:
+        self.market: Market = market
+        self.title: str = f"Round {round}"
 
     # -- DESIGN -- #
     def design(self):
@@ -39,7 +41,7 @@ class Analyse:
         }
 
         fig, ax = plt.subplots(layout='constrained')
-        fig.suptitle(TITLE)
+        fig.suptitle(self.title)
 
         res = ax.grouped_bar(style_sales, tick_labels=focus_groups, group_spacing=1) # pyright: ignore
         for container in res.bar_containers: # pyright: ignore
@@ -91,7 +93,7 @@ class Analyse:
         }
 
         fig, ax = plt.subplots(layout='constrained')
-        fig.suptitle(TITLE)
+        fig.suptitle(self.title)
 
         res = ax.grouped_bar(feature_sales, tick_labels=focus_groups, group_spacing=1) # pyright: ignore
         for container in res.bar_containers: # pyright: ignore
@@ -134,7 +136,7 @@ class Analyse:
         }
 
         fig, ax = plt.subplots(layout='constrained')
-        fig.suptitle(TITLE)
+        fig.suptitle(self.title)
 
         res = ax.grouped_bar(feature_sales, tick_labels=design_groups, group_spacing=1) # pyright: ignore
         for container in res.bar_containers: # pyright: ignore
@@ -162,7 +164,7 @@ class Analyse:
         sports = self.market.sport().products
 
         fig, ax = plt.subplots()
-        fig.suptitle(TITLE)
+        fig.suptitle(self.title)
 
         x = [p.performance for p in classics]
         if group == "H":
@@ -230,7 +232,7 @@ class Analyse:
         sports = self.market.sport().products
 
         fig, ax = plt.subplots()
-        fig.suptitle(TITLE)
+        fig.suptitle(self.title)
 
         x = [p.battery for p in classics]
         if group == "H":
@@ -301,7 +303,7 @@ class Analyse:
         sports = self.market.sport().products
 
         fig, ax = plt.subplots()
-        fig.suptitle(TITLE)
+        fig.suptitle(self.title)
 
         x = [p.performance_per_euro() for p in classics]
         y = [p.total_sales for p in classics]
@@ -340,7 +342,7 @@ class Analyse:
         sports = self.market.sport().products
 
         fig, ax = plt.subplots()
-        fig.suptitle(TITLE)
+        fig.suptitle(self.title)
 
         x = [p.performance_per_euro() for p in classics]
         if group == "H":
@@ -409,7 +411,7 @@ class Analyse:
         sports = self.market.sport().products
 
         fig, ax = plt.subplots()
-        fig.suptitle(TITLE)
+        fig.suptitle(self.title)
 
         x = [p.battery_per_euro() for p in classics]
         y = [p.total_sales for p in classics]
@@ -449,7 +451,7 @@ class Analyse:
         sports = self.market.sport().products
 
         fig, ax = plt.subplots()
-        fig.suptitle(TITLE)
+        fig.suptitle(self.title)
 
         x = [p.battery_per_euro() for p in classics]
         if group == "H":
@@ -522,7 +524,7 @@ class Analyse:
         sports = self.market.sport().products
 
         fig, ax = plt.subplots()
-        fig.suptitle(TITLE)
+        fig.suptitle(self.title)
 
         x = [p.price for p in classics]
         y = [p.total_sales for p in classics]
@@ -553,15 +555,13 @@ class Analyse:
         ax.set_ylabel("sales k")
         ax.grid(True)
 
-
-
     def group_price(self, group:Literal["H", "HH", "C", "HC"]):
         classics = self.market.classic().products
         avants = self.market.avant_garde().products
         sports = self.market.sport().products
 
         fig, ax = plt.subplots()
-        fig.suptitle(TITLE)
+        fig.suptitle(self.title)
 
         x = [p.price for p in classics]
         if group == "H":
@@ -614,53 +614,106 @@ class Analyse:
         ax.set_title(f"{group} Price")
         ax.set_xlabel("price €")
         ax.set_ylabel("sales k")
+        ax.set_ylim(0)
         ax.grid(True)
 
     # -- RELATIVE PRICE -- #
 
-    def median(self):
-        self.all_median()
-        #self.group_median("H")
-        #self.group_median("HH")
-        #self.group_median("C")
-        #self.group_median("HC")
+    def cumulative(self):
+        self.group_cumulative("H")
+        self.group_cumulative("HH")
+        self.group_cumulative("C")
+        self.group_cumulative("HC")
         plt.show()
 
-    def all_median(self):
-        classics = self.market.classic().products
-        avants = self.market.avant_garde().products
-        sports = self.market.sport().products
+    def group_cumulative(self, group:Literal["H", "HH", "C", "HC"]):
+        if group == "H":
+            low_perf = [p for p in self.market.households().products if p.performance <= self.market.stats.low_performance()]
+            high_perf = [p for p in self.market.households().products if p.performance >= self.market.stats.high_performance()]
+            mid_perf = [p for p in self.market.households().products if p not in low_perf and p not in high_perf]
+
+            average = self.market.households().stats.average_price()
+            x_average = [average, average]
+            y_average = [0, self.market.households().y_lim().total]
+            x_trend = [p.price for p in self.market.households().products]
+            y_cum_sales = list(itertools.accumulate([p.total_sales / self.market.households().total for p in self.market.households().products]))
+            y_cum_sales = [1 - p for p in y_cum_sales]
+        elif group == "HH":
+            low_perf = [p for p in self.market.high_end_households().products if p.performance <= self.market.stats.low_performance()]
+            high_perf = [p for p in self.market.high_end_households().products if p.performance >= self.market.stats.high_performance()]
+            mid_perf = [p for p in self.market.high_end_households().products if p not in low_perf and p not in high_perf]
+
+            average = self.market.high_end_households().stats.average_price()
+            x_average = [average, average]
+            y_average = [0, self.market.high_end_households().y_lim().total]
+            x_trend = [p.price for p in self.market.high_end_households().products]
+            y_cum_sales = list(itertools.accumulate([p.total_sales / self.market.high_end_households().total for p in self.market.high_end_households().products]))
+            y_cum_sales = [1 - p for p in y_cum_sales]
+        elif group == "C":
+            low_perf = [p for p in self.market.companies().products if p.performance <= self.market.stats.low_performance()]
+            high_perf = [p for p in self.market.companies().products if p.performance >= self.market.stats.high_performance()]
+            mid_perf = [p for p in self.market.companies().products if p not in low_perf and p not in high_perf]
+            
+            average = self.market.companies().stats.average_price()
+            x_average = [average, average]
+            y_average = [0, self.market.companies().y_lim().total]
+            x_trend = [p.price for p in self.market.companies().products]
+            y_cum_sales = list(itertools.accumulate([p.total_sales / self.market.companies().total for p in self.market.companies().products]))
+            y_cum_sales = [1 - p for p in y_cum_sales]
+        elif group == "HC":
+            low_perf = [p for p in self.market.high_end_companies().products if p.performance <= self.market.stats.low_performance()]
+            high_perf = [p for p in self.market.high_end_companies().products if p.performance >= self.market.stats.high_performance()]
+            mid_perf = [p for p in self.market.high_end_companies().products if p not in low_perf and p not in high_perf]
+            
+            average = self.market.high_end_companies().stats.average_price()
+            x_average = [average, average]
+            y_average = [0, self.market.high_end_companies().y_lim().total]
+            x_trend = [p.price for p in self.market.high_end_companies().products]
+            y_cum_sales = list(itertools.accumulate([p.total_sales / self.market.high_end_companies().total for p in self.market.high_end_companies().products]))
+            y_cum_sales = [1 - p for p in y_cum_sales]
+        else: raise ValueError()
 
         fig, ax = plt.subplots()
-        fig.suptitle(TITLE)
+        fig.suptitle(self.title)
 
-        x = [p.price for p in classics]
-        y = [p.total_sales for p in classics]
+        # Plot performance
+        x = [p.price for p in low_perf]
+        y = [p.total_sales for p in low_perf]
         scale = 200
-        ax.scatter(x, y, c=f"tab:blue", s=scale, label="Classic",
+        ax.scatter(x, y, c=f"tab:orange", s=scale, label="Low",
                 alpha=0.3, edgecolors='none')
 
-        x = [p.price for p in avants]
-        y = [p.total_sales for p in avants]
+        x = [p.price for p in mid_perf]
+        y = [p.total_sales for p in mid_perf]
         scale = 200
-        ax.scatter(x, y, c=f"tab:orange", s=scale, label="Avant garde",
+        ax.scatter(x, y, c=f"tab:blue", s=scale, label="Mid",
                 alpha=0.3, edgecolors='none')
 
-        x = [p.price for p in sports]
-        y = [p.total_sales for p in sports]
+        x = [p.price for p in high_perf]
+        y = [p.total_sales for p in high_perf]
         scale = 200
-        ax.scatter(x, y, c=f"tab:green", s=scale, label="Sport",
+        ax.scatter(x, y, c=f"tab:green", s=scale, label="High",
                 alpha=0.3, edgecolors='none')
 
-        # Calculate the best-fit line
-        z = np.polyfit(x, y, 1)
-        p = np.poly1d(z)
-        plt.plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+        # Plot averageline
+        plt.plot(x_average, y_average, color="red", linewidth=2, linestyle="--")
 
+        # Plot cumulative sales
+        ax2 = ax.twinx()
+        ax2.plot(x_trend, y_cum_sales, color="green", linewidth=2, linestyle="--")
+        ax2.set_ylim(0, 1)
+
+        y_limit = max([
+            self.market.bestseller("H").households_sales,
+            self.market.bestseller("HH").high_end_households_sales,
+            self.market.bestseller("C").companies_sales,
+            self.market.bestseller("HC").high_end_households_sales,
+        ])
         ax.legend()
-        ax.set_title("All Price")
+        ax.set_title(f"{group} Average")
         ax.set_xlabel("price €")
         ax.set_ylabel("sales k")
+        ax.set_ylim(0, 150)
         ax.grid(True)
 
     # -- ? -- #
@@ -691,12 +744,12 @@ class Analyse:
         source.sort(key=lambda p: p.margin())
         x_margin = [p.margin() for p in source]
 
-        source.sort(key=lambda p: abs(p.price - self.market.stats.median_price()))
-        x_deviance = [abs(p.price - self.market.stats.median_price()) for p in source]
+        source.sort(key=lambda p: abs(p.price - self.market.stats.average_price()))
+        x_deviance = [abs(p.price - self.market.stats.average_price()) for p in source]
 
 
         fig, ax = plt.subplots(2,2)
-        fig.suptitle(TITLE)
+        fig.suptitle(self.title)
 
         ax[0,0].plot(x_price, y); ax[0,0].set_title("Price"); ax[0,0].set_ylabel("profit"); ax[0,0].set_xlabel("price €")
         ax[0,1].plot(x_sales, y); ax[0,1].set_title("Sales"); ax[0,1].set_ylabel("profit"); ax[0,1].set_xlabel("sales k")

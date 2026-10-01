@@ -23,25 +23,14 @@ class Stats:
         for product in self.products:
             prices.append(product.price)
         return max(prices)
-            
-    def median_price(self) -> float:
-        prices = []
-        for product in self.products:
-            prices.append(product.price)
-        prices.sort()
-
-        size = len(prices)
-        if size % 2 == 0:
-            result = (prices[size//2 - 1] + prices[size//2]) / 2
-        else:
-            result = prices[size//2]
-        return result
     
     def average_price(self) -> float:
         prices = []
+        total_sales = 0
         for product in self.products:
-            prices.append(product.price)
-        return sum(prices) / len(prices)
+            prices.append(product.price * product.total_sales)
+            total_sales += product.total_sales
+        return sum(prices) / total_sales
 
     # -- PERFORMANCE & BATTERY -- #
     def min_performance(self) -> float:
@@ -172,7 +161,22 @@ class Market:
             sum([p.total_sales for p in self.products if p.security]),
         ])
 
-        return YLimit(largest_group_total, largest_design_total, largest_feature_total, self.total)
+        largest_product_total: float = max([p.total_sales for p in self.products])
+
+        return YLimit(largest_group_total, largest_design_total, largest_feature_total, largest_product_total)
+
+    def bestseller(self, group:Literal["H", "HH", "C", "HC"]|None=None):
+        phones = self.products.copy()
+        phones.sort(key=lambda p: p.total_sales)
+        if group == "H":
+            phones.sort(key=lambda p: p.households_sales)
+        if group == "HH":
+            phones.sort(key=lambda p: p.high_end_households_sales)
+        if group == "C":
+            phones.sort(key=lambda p: p.companies_sales)
+        if group == "HC":
+            phones.sort(key=lambda p: p.high_end_companies_sales)
+        return phones[-1]
 
 
     def _only_household_sales(self, product:Product) -> Product:
