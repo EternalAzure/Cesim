@@ -1300,6 +1300,32 @@ class Analyse:
         self.channel_investments_h()
         plt.show()
 
+    def all_channel_investments(self):
+        source = self.market.products
+
+        x = [p.channel_investments for p in source]
+        y = [p.total_sales for p in source]
+        
+        fig, ax = plt.subplots()
+        fig.suptitle(self.title)
+        ax.scatter(x,y)
+        ax.set_title("Channel Investments")
+        ax.set_xlabel("investment €")
+        ax.set_ylabel("sales k")
+
+        # Trendline
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        plt.plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        plt.show()
+
+        # x  600, y 216.5
+        # x 1400, y 231.4
+        #    800     14.9
+        #    14.9 / 800 = 0.01862
+
+
     def channel_investments_hc(self):
         source = self.market.products.copy()
         source.sort(key=lambda p: p.channel_investments)
