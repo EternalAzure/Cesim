@@ -837,14 +837,11 @@ class Analyse:
         ax.set_ylim(0, 150)
         ax.grid(True)
 
-    # ADVERTIZING -- #
+    # -- ADVERTIZING -- #
     def advertizing(self):
-        self.all_advertizing()
+        #self.all_advertizing()
+        self.advertizing_x_sales()
         self.all_awareness()
-        self.hh_awareness()
-        self.h_awareness()
-        self.hc_awareness()
-        self.c_awareness()
         self.awareness_x_sales()
         plt.show()
         
@@ -866,7 +863,8 @@ class Analyse:
         source = self.market.products.copy()
         source.sort(key=lambda p: p.advertizing)
         x = [p.advertizing for p in source]
-        
+
+        trendline = [p.total_awareness for p in source]
         awareness_h = [p.households_awareness for p in source]
         awareness_hh = [p.high_end_households_awareness for p in source]
         awareness_c = [p.companies_awareness for p in source]
@@ -889,150 +887,35 @@ class Analyse:
             p = ax.bar(x, awareness_count, width, label=boolean, bottom=bottom)
             bottom += awareness_count
 
-        ax.set_title("All Awareness")
-        ax.set_xlabel("advertizing €")
-        ax.set_ylabel("awareness k")
-        ax.legend(loc="upper right")
-        
-    def h_awareness(self):
-        source = self.market.products.copy()
-        source.sort(key=lambda p: p.advertizing)
-        x = [p.advertizing for p in source]
-        
-        awareness_h = [p.households_awareness for p in source]
-        awareness_hh = [p.high_end_households_awareness for p in source]
-        awareness_c = [p.companies_awareness for p in source]
-        awareness_hc = [p.high_end_companies_awareness for p in source]
-
-        awareness_counts = {
-            "H": awareness_h,          
-        }
-        width = 60
-
-        fig, ax = plt.subplots()
-        fig.suptitle(self.title)
-
-        bottom = np.zeros(len(x))
-
-        for boolean, awareness_count in awareness_counts.items():
-            p = ax.bar(x, awareness_count, width, label=boolean, bottom=bottom)
-            bottom += awareness_count
-
         # Trendline
+        z = np.polyfit(x, trendline, 1)
+        p = np.poly1d(z)
+        plt.plot(x, p(x), color="grey", linewidth=2, linestyle="--")
+
         z = np.polyfit(x, awareness_h, 1)
         p = np.poly1d(z)
         plt.plot(x, p(x), color="purple", linewidth=2, linestyle="--")
 
-        ax.set_title("H Awareness")
-        ax.set_xlabel("advertizing €")
-        ax.set_ylabel("awareness k")
-        ax.legend(loc="upper right")
-        
-    def hh_awareness(self):
-        source = self.market.products.copy()
-        source.sort(key=lambda p: p.advertizing)
-        x = [p.advertizing for p in source]
-        
-        awareness_h = [p.households_awareness for p in source]
-        awareness_hh = [p.high_end_households_awareness for p in source]
-        awareness_c = [p.companies_awareness for p in source]
-        awareness_hc = [p.high_end_companies_awareness for p in source]
-
-        awareness_counts = {
-            "HH": awareness_hh,          
-        }
-        width = 60
-
-        fig, ax = plt.subplots()
-        fig.suptitle(self.title)
-
-        bottom = np.zeros(len(x))
-
-        for boolean, awareness_count in awareness_counts.items():
-            p = ax.bar(x, awareness_count, width, label=boolean, bottom=bottom)
-            bottom += awareness_count
-
-        # Trendline
         z = np.polyfit(x, awareness_hh, 1)
         p = np.poly1d(z)
-        plt.plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+        plt.plot(x, p(x), color="orange", linewidth=2, linestyle="--")
 
-        ax.set_title("HH Awareness")
-        ax.set_xlabel("advertizing €")
-        ax.set_ylabel("awareness k")
-        ax.legend(loc="upper right")
-        
-    def c_awareness(self):
-        source = self.market.products.copy()
-        source.sort(key=lambda p: p.advertizing)
-        x = [p.advertizing for p in source]
-        
-        awareness_h = [p.households_awareness for p in source]
-        awareness_hh = [p.high_end_households_awareness for p in source]
-        awareness_c = [p.companies_awareness for p in source]
-        awareness_hc = [p.high_end_companies_awareness for p in source]
-
-        awareness_counts = {
-            "C": awareness_c,          
-        }
-        width = 60
-
-        fig, ax = plt.subplots()
-        fig.suptitle(self.title)
-
-        bottom = np.zeros(len(x))
-
-        for boolean, awareness_count in awareness_counts.items():
-            p = ax.bar(x, awareness_count, width, label=boolean, bottom=bottom)
-            bottom += awareness_count
-
-        # Trendline
         z = np.polyfit(x, awareness_c, 1)
         p = np.poly1d(z)
-        plt.plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+        plt.plot(x, p(x), color="green", linewidth=2, linestyle="--")
 
-        ax.set_title("C Awareness")
-        ax.set_xlabel("advertizing €")
-        ax.set_ylabel("awareness k")
-        ax.legend(loc="upper right")
-        
-    def hc_awareness(self):
-        source = self.market.products.copy()
-        source.sort(key=lambda p: p.advertizing)
-        x = [p.advertizing for p in source]
-        
-        awareness_h = [p.households_awareness for p in source]
-        awareness_hh = [p.high_end_households_awareness for p in source]
-        awareness_c = [p.companies_awareness for p in source]
-        awareness_hc = [p.high_end_companies_awareness for p in source]
-
-        awareness_counts = {
-            "HC": awareness_hc,          
-        }
-        width = 60
-
-        fig, ax = plt.subplots()
-        fig.suptitle(self.title)
-
-        bottom = np.zeros(len(x))
-
-        for boolean, awareness_count in awareness_counts.items():
-            p = ax.bar(x, awareness_count, width, label=boolean, bottom=bottom)
-            bottom += awareness_count
-
-        # Trendline
         z = np.polyfit(x, awareness_hc, 1)
         p = np.poly1d(z)
-        plt.plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+        plt.plot(x, p(x), color="blue", linewidth=2, linestyle="--")
 
-        ax.set_title("HC Awareness")
+        ax.set_title("All Awareness")
         ax.set_xlabel("advertizing €")
         ax.set_ylabel("awareness k")
         ax.legend(loc="upper right")
-        
+
     def awareness_x_sales(self):
         source = self.market.products.copy()
-        source.sort(key=lambda p: p.advertizing)
+        source.sort(key=lambda p: p.total_awareness)
         x = [p.total_awareness for p in source]
 
         trendline = [p.total_sales for p in source]
@@ -1065,6 +948,69 @@ class Analyse:
 
         ax.set_title("All Awareness x Sales")
         ax.set_xlabel("awareness")
+        ax.set_ylabel("sales k")
+        ax.legend(loc="upper right")
+        
+    def advertizing_x_sales(self):
+        source = self.market.products.copy()
+        source.sort(key=lambda p: p.advertizing)
+        x = [p.advertizing for p in source]
+
+        trendline = [p.total_sales for p in source]
+        sales_h = [p.households_sales for p in source]
+        sales_hh = [p.high_end_households_sales for p in source]
+        sales_c = [p.companies_sales for p in source]
+        sales_hc = [p.high_end_companies_sales for p in source]
+
+        sales_counts = {
+            "H": sales_h,
+            "HH": sales_hh,
+            "C": sales_c,
+            "HC": sales_hc,  
+        }
+        width = 60
+
+        fig, ax = plt.subplots()
+        fig.suptitle(self.title)
+
+        bottom = np.zeros(len(x))
+
+        for key, sales_count in sales_counts.items():
+            color = "grey"
+            if key == "H":
+                color = "purple"
+            if key == "HH":
+                color = "orange"
+            if key == "C":
+                color = "green"
+            if key == "HC":
+                color = "blue"
+            p = ax.bar(x, sales_count, width, label=key, bottom=bottom, color=[color])
+            bottom += sales_count
+
+        # Trendline
+        z = np.polyfit(x, trendline, 1)
+        p = np.poly1d(z)
+        plt.plot(x, p(x), color="grey", linewidth=2, linestyle="--")
+
+        z = np.polyfit(x, sales_h, 1)
+        p = np.poly1d(z)
+        plt.plot(x, p(x), color="purple", linewidth=2, linestyle="--")
+
+        z = np.polyfit(x, sales_hh, 1)
+        p = np.poly1d(z)
+        plt.plot(x, p(x), color="orange", linewidth=2, linestyle="--")
+
+        z = np.polyfit(x, sales_c, 1)
+        p = np.poly1d(z)
+        plt.plot(x, p(x), color="green", linewidth=2, linestyle="--")
+
+        z = np.polyfit(x, sales_hc, 1)
+        p = np.poly1d(z)
+        plt.plot(x, p(x), color="blue", linewidth=2, linestyle="--")
+
+        ax.set_title("All Advertizing x Sales")
+        ax.set_xlabel("advertizing €")
         ax.set_ylabel("sales k")
         ax.legend(loc="upper right")
 
@@ -1295,6 +1241,7 @@ class Analyse:
   
     # -- CHANNEL INVESTMENTS -- #
     def channel_investments(self):
+        self.all_channel_investments()
         self.channel_investments_hc()
         self.channel_investments_hh()
         self.channel_investments_h()

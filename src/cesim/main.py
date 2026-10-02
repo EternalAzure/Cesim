@@ -283,7 +283,7 @@ def main() -> None:
     #analyse_europe.cumulative()
 
     # Löydä markkinoinnin vaikutus
-    #analyse_europe.advertizing()
+    analyse_europe.advertizing()
     #analyse_europe.advertizing_relook()
     #analyse_europe.channel_investments()
 
@@ -298,6 +298,14 @@ def main() -> None:
     #analyse_europe.compare.low_price_segment()
 
     # Kartoita kilpailu
+    #segment = market_europe.camera().memory().security()
+    #result = analyse_europe.demand(segment)
+    #print(result)
+    #analyse_europe.competion(camera=True, memory=True, security=True)
+
+    print(market_europe.households().total)
+    
+    pass
 
 
     # Mallinna kysyntä
