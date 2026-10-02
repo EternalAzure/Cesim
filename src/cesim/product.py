@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 
+
 @dataclass
 class Product:
 
@@ -59,15 +60,28 @@ class Product:
         self.companies_sales = round(self.companies_sales, 2)
         self.high_end_companies_sales = round(self.high_end_companies_sales, 2)
         self.total_sales = round(self.total_sales, 2)
+        
+        self.margin = self.price - self.variable_unit_cost
+        self.margin_percent = self.margin / self.variable_unit_cost
+        self.performance_per_euro = self.performance / self.price
+        self.battery_per_euro = self.battery / self.price
+        self.total_awareness = self.households_awareness + self.high_end_households_awareness + self.companies_awareness + self.high_end_companies_awareness
+        self.profit = self.total_sales * self.margin
 
-    def margin(self):
-        return self.price - self.variable_unit_cost
+        self.audience = f"H{round(self.households_market_share)} HH{round(self.high_end_households_market_share)} C{round(self.companies_market_share)} HC{round(self.high_end_companies_market_share)}"
 
-    def performance_per_euro(self):
-        return self.performance / self.price
+    #def margin(self):
+    #    return self.price - self.variable_unit_cost
 
-    def battery_per_euro(self):
-        return self.battery / self.price
+    #def performance_per_euro(self):
+    #    return self.performance / self.price
 
-    def total_awareness(self) -> float:
-        return self.households_awareness + self.high_end_households_awareness + self.companies_awareness + self.high_end_companies_awareness
+    #def battery_per_euro(self):
+    #    return self.battery / self.price
+
+    #def total_awareness(self) -> float:
+    #    return self.households_awareness + self.high_end_households_awareness + self.companies_awareness + self.high_end_companies_awareness
+
+    #def profit(self) -> float:
+    #    return self.total_sales * self.margin()
+

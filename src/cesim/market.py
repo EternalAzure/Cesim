@@ -1,10 +1,18 @@
 from collections import namedtuple
 from typing import Any, Literal
 import copy
+import numpy as np
 
 from .product import Product
 
 YLimit = namedtuple("YLimit", ["group", "design", "feature", "total"])
+
+class Bins:
+
+    def __init__(self, low:list[Product], mid:list[Product], high:list[Product]) -> None:
+        self.low = Market(low)
+        self.mid = Market(mid)
+        self.high = Market(high)
 
 class Stats:
 
@@ -33,10 +41,10 @@ class Stats:
         return sum(prices) / total_sales
 
     # -- PERFORMANCE & BATTERY -- #
-    def min_performance(self) -> float:
+    def min_performance(self) -> int:
         return min([p.performance for p in self.products])
 
-    def max_performance(self) -> float:
+    def max_performance(self) -> int:
         return max([p.performance for p in self.products])
             
     def median_performance(self) -> float:
@@ -61,10 +69,10 @@ class Stats:
     def high_performance(self) -> float:
         return (self.max_performance() + self.average_performance()) / 2
 
-    def min_battery(self) -> float:
+    def min_battery(self) -> int:
         return min([p.battery for p in self.products])
 
-    def max_battery(self) -> float:
+    def max_battery(self) -> int:
         return max([p.battery for p in self.products])
             
     def median_battery(self) -> float:
@@ -91,10 +99,10 @@ class Stats:
 
     # -- PPE & BPE -- #
     def average_ppe(self) -> float:
-        return sum([p.performance_per_euro() for p in self.products]) / len(self.products) 
+        return sum([p.performance_per_euro for p in self.products]) / len(self.products) 
 
     def average_bpe(self) -> float:
-        return sum([p.battery_per_euro() for p in self.products]) / len(self.products) 
+        return sum([p.battery_per_euro for p in self.products]) / len(self.products) 
     
 
 class Market:
@@ -143,6 +151,66 @@ class Market:
         
     def security(self) -> Market:
         return Market([p for p in self.products if p.security])
+
+
+    # -- SPECS -- #
+    def performance(self):
+        source = self.products.copy()
+        source.sort(key=lambda p: p.performance)
+        low = source[:len(source) // 3]
+        mid = source[len(source) // 3:-len(source) // 3]
+        high = source[-len(source) // 3:]
+        return Bins(low=low, mid=mid, high=high)
+
+    def battery(self):
+        source = self.products.copy()
+        source.sort(key=lambda p: p.battery)
+        low = source[:len(source) // 3]
+        mid = source[len(source) // 3:-len(source) // 3]
+        high = source[-len(source) // 3:]
+        return Bins(low=low, mid=mid, high=high)
+
+    # -- ECONOMIC -- #
+    def popularity(self):
+        source = self.products.copy()
+        source.sort(key=lambda p: p.total_sales)
+        low = source[:len(source) // 3]
+        mid = source[len(source) // 3:-len(source) // 3]
+        high = source[-len(source) // 3:]
+        return Bins(low=low, mid=mid, high=high)
+
+    def advertized(self):
+        source = self.products.copy()
+        source.sort(key=lambda p: p.advertizing)
+        low = source[:len(source) // 3]
+        mid = source[len(source) // 3:-len(source) // 3]
+        high = source[-len(source) // 3:]
+        return Bins(low=low, mid=mid, high=high)
+
+    def aware(self):
+        source = self.products.copy()
+        source.sort(key=lambda p: p.total_awareness)
+        low = source[:len(source) // 3]
+        mid = source[len(source) // 3:-len(source) // 3]
+        high = source[-len(source) // 3:]
+        return Bins(low=low, mid=mid, high=high)
+
+    def profitable(self):
+        source = self.products.copy()
+        source.sort(key=lambda p: p.profit)
+        low = source[:len(source) // 3]
+        mid = source[len(source) // 3:-len(source) // 3]
+        high = source[-len(source) // 3:]
+        return Bins(low=low, mid=mid, high=high)
+
+    def price(self):
+        source = self.products.copy()
+        source.sort(key=lambda p: p.price)
+        low = source[:len(source) // 3]
+        mid = source[len(source) // 3:-len(source) // 3]
+        high = source[-len(source) // 3:]
+        return Bins(low=low, mid=mid, high=high)
+    
 
     # -- GRAPH -- #
     def y_lim(self) -> YLimit:

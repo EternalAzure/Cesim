@@ -6,7 +6,7 @@ import pandas as pd
 
 from .product import Product
 from .market import Market
-from .analyse import Analyse
+from .analyse import Analyse, DisplayPhone
 
 
 
@@ -263,10 +263,10 @@ def main() -> None:
 
     # -- ALOITA TÄSTÄ -- #
     # Löydä suosituimmat tyylit
-    #analyse_europe.design()
+    #analyse_asia.design()
 
     # Löydä suosituimmat ominaisuudet
-    #analyse_europe.feature()
+    #analyse_asia.feature()
     #analyse_europe.design_feature()
     
     # Löydä tehon ja akun suhde kysyntään
@@ -291,8 +291,16 @@ def main() -> None:
     #analyse_europe.profit()
     #analyse_europe.profit_x_specs()
 
-    # Mallinnan kysyntä
-    
+    # Vertaa tuotteita
+    #analyse_europe.compare.winners_across_segments()
+    #analyse_europe.compare.high_price_segment()
+    #analyse_europe.compare.mid_price_segment()
+    #analyse_europe.compare.low_price_segment()
+
+    # Kartoita kilpailu
+
+
+    # Mallinna kysyntä
     
     return
 
