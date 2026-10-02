@@ -1605,6 +1605,128 @@ class Analyse:
         fig.tight_layout()
         plt.show()
 
+    # -- COMPETITION -- #
+    def competion(self, 
+                  camera:bool=False, memory:bool=False, display:bool=False, resistance:bool=False, security:bool=False, 
+                  classic:bool=False, avant_garde:bool=False, sport:bool=False):
+        
+        source = self.market
+        if camera:
+            source = source.camera()
+        if memory:
+            source = source.memory()
+        if display:
+            source = source.display()
+        if resistance:
+            source = source.resistance()
+        if security:
+            source = source.security()
+
+        if sport:
+            source = source.sport()
+        if avant_garde:
+            source = source.avant_garde()
+        if classic:
+            source = source.classic()
+
+        # COMPETITION #
+        x_classics = [p.price for p in source.classic().products]
+        x_avants = [p.price for p in source.avant_garde().products]
+        x_sports = [p.price for p in source.sport().products]
+        y_classics = [p.performance + p.battery for p in source.classic().products]
+        y_avants = [p.performance + p.battery for p in source.avant_garde().products]
+        y_sports = [p.performance + p.battery for p in source.sport().products]
+
+        # DEMAND #
+        x_price = [p.price for p in source.products]
+        y_h_sales = [p.households_sales for p in source.products]
+        y_hh_sales = [p.high_end_households_sales for p in source.products]
+        y_c_sales = [p.companies_sales for p in source.products]
+        y_hc_sales = [p.high_end_companies_sales for p in source.products]
+        y_total_sales = [p.total_sales for p in source.products]
+
+        # PLOT COMPETITION #
+        fig, ax = plt.subplots()
+        ax.scatter(x_classics, y_classics, c="tab:blue")
+        ax.scatter(x_avants, y_avants, c="tab:orange")
+        ax.scatter(x_sports, y_sports, c="tab:green")
+        ax.set_xlabel("price €")
+        ax.set_ylabel("specs")
+
+        # PLOT DEMAND #
+        ax2 = ax.twinx()
+        ax2.plot(x_price, y_h_sales, color="purple", label="Households")
+        ax2.plot(x_price, y_hh_sales, color="orange", label="High-End Households")
+        ax2.plot(x_price, y_c_sales, color="green", label="Companies")
+        ax2.plot(x_price, y_hc_sales, color="blue", label="High-End Companies")
+        ax2.plot(x_price, y_total_sales, color="grey", label="Total sales", linestyle="--")
+        ax2.set_ylabel("sales k")
+        ax2.legend(loc="upper left")
+
+        plt.show()
+
+    # -- DEMAND -- #
+    def demand(self, market:Market):
+
+        situation = pd.DataFrame(columns=[
+            "price",
+            "performance",
+            "battery",
+            
+            "h_sales",
+            "hh_sales",
+            "c_sales",
+            "hc_sales",
+            "total_sales",
+
+            "ads",
+            "h_awareness",
+            "hh_awareness",
+            "c_awareness",
+            "hc_awareness",
+            "total_awareness",
+            "base_awareness",
+            
+            "channel_investments",
+            "specialist",
+            "generalist",
+            "online",
+
+        ])
+        for i, product in enumerate(market.products, 1):
+            situation.loc[i] = [
+                # specs
+                product.price,
+                product.performance,
+                product.battery,
+
+                # sales
+                product.households_sales,
+                product.high_end_households_sales,
+                product.companies_sales,
+                product.high_end_companies_sales,
+                product.total_sales,
+
+                # ads
+                product.advertizing,
+                product.households_awareness,
+                product.high_end_households_awareness,
+                product.companies_awareness,
+                product.high_end_companies_awareness,
+                product.total_awareness,
+                product.total_awareness - (product.advertizing * 0.2),
+
+                # 
+                product.channel_investments,
+                product.specialist,
+                product.generalist,
+                product.online,
+            ]
+        return situation
+
+# 598,6
+
+
 
 class DisplayPhone:
 
