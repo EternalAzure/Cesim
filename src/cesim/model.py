@@ -1,57 +1,38 @@
 from typing import Literal
 
+        # EURO TO AWARENESS BY TEAMS
+        # All, Europe
+        #         Blue    Green   Grey    Orange  Pink    Red
+        # Round 3        -0.080   0.049   0.066   0.105   0.063
+        # Round 2 1.527   0.023   0.038   0.052  -0.004  -0.021
+        # Round 1 0.011   0.014   0.072   0.027           0.016
 
-        # H Advertizing x Sales
-        # Round 3: -0.00951x
-        # Round 2: 0.00106x 
-        # Round 1: -0.00038x
+        # All, Asia
+        #         Blue    Green   Grey    Orange  Pink    Red
+        # Round 3         0.069   0.164   0.046           0.108
+        # Round 2 2.284   0.020           0.011           0.066
+        # Round 1 0.013                   0.003                
 
-        # H Advertizing x Sales     Round 3 - 1014.53
-        # 1000  68.89
-        # 3000  49.87
-        # 2000  -19.02
-        # -19.02 / 2000 = -0.00951
+        # H, Europe
+        #         Blue    Green   Grey    Orange  Pink    Red
+        # Round 3         0.231   0.123   0.162   0.170   0.183
+        # Round 2 0.197   0.155   0.223   0.182   0.182   0.282
+        # Round 1 0.155   0.146   0.194   0.179  -0.288   0.153
+        
+        # AWARENESS TO SALES BY TEAMS
+        # All, Europe
+        #         Blue    Green   Grey    Orange  Pink    Red
+        # Round 3         0.231   0.123   0.162   0.170   0.183
+        # Round 2 0.197   0.155   0.223   0.182   0.182   0.282
+        # Round 1 0.155   0.146   0.194   0.179  -0.288   0.153
 
-        # 1000  14.07               Round 2 - 238.47
-        # 2000  15.13
-        # 1000   1.06
-        # 1.06 / 1000 = 0.00106
+        # All, Asia
+        #         Blue    Green   Grey    Orange  Pink    Red
+        # Round 3         0.162   0.197   0.135           0.219
+        # Round 2 0.197   0.169           0.129           0.183
+        # Round 1 0.173                   0.154                
 
-        # 1000  6.277                Round 1 - 81.44
-        # 3000  5.515
-        # 2000  -0.762
-        # -0.762 / 1000 = -0.000381
-        # ----
-        # HH Advertizing x Sales    Round 3 - 1111.87
-        # 1000  51.07
-        # 2000  65.87
-        # 1000  14.8
-        # 14.8 / 1000 = 0.0148
-
-        # 1000  28.61               Round 2 - 575.39
-        # 2000  38.02
-        # 1000  9.41
-        # 9.41 / 1000 = 0.00941
-
-        # 1000  13.88               Round 1 - 247.47
-        # 2000  17.03
-        # 1000  3.15
-        # 13.15 / 1000 = 0.00315
-
-        # Vaikutus skaalattu markkinan mukaan   247.47      575.39      1111.87     1000
-        # 0.00315 -> 0.00732 ja 0.01415         0.00315     0.00732     0.01415     
-        # 0.00941 -> 0.00405 ja 0.01818         0.00405     0.00941     0.01818
-        # 0.0148  -> 0.00766 ja 0.00394         0.00394     0.00766     0.01480
-        # ----
-        # C Advertizing x Sales
-        # Round 3: 0.00044x
-        # Round 2: 0.00114x 
-        # Round 1: 0.00032x
-        # ----
-        # HC Advertizing x Sales
-        # Round 3: 0.009734x
-        # Round 2: 0.004976x
-        # Round 1: 0.004529x
+        # EURO TO AWARENESS BY TEAMS
 
 
 
@@ -59,24 +40,37 @@ class Model:
 
     def __init__(self) -> None:
 
+        self.money_to_awareness_h =  0.50  
+        self.money_to_awareness_hh = 0.50  
+        self.money_to_awareness_c =  0.50  
+        self.money_to_awareness_hc = 0.50  
 
-        self.ad_effect_h: float = 0.0       # Tilastollisesti
-        self.ad_effect_hh: float = 0.01571  # 0.01571 sales per euro when market size is 1111.87k
-        self.ad_effect_c: float = 0.0       # Tilastollisesti
-        self.ad_effect_hc: float = 0.0077
+        self.awareness_to_intentions_h =    0.50
+        self.awareness_to_intentions_hh =   0.50
+        self.awareness_to_intentions_c =    0.50
+        self.awareness_to_intentions_hc =   0.50
 
-        self.money_to_awareness_h = 0.0 # Valhe
-        self.money_to_awareness_hh = 0.0 # Valhe
-        self.money_to_awareness_c = 0.0 # Valhe
-        self.money_to_awareness_hc = 0.0 # Valhe
-
-        self.awareness_to_sales = 0.174 # rounds: 0.1593, 0.1742, 0.1885 (awareness x sales)
-        self.awareness_to_sales_h = 0.174 # rounds: 
-        self.awareness_to_sales_hh = 0.174 # rounds: 
-        self.awareness_to_sales_c = 0.174 # rounds: 
-        self.awareness_to_sales_hc = 0.174 # rounds: 
+        self.intentions_to_sales_h =    0.50
+        self.intentions_to_sales_hh =   0.50
+        self.intentions_to_sales_c =    0.16
+        self.intentions_to_sales_hc =   0.40
 
         self.channel_investment_effect = 0.01828 # rounds: 1.01166, 1.02456, 1.01862
+
+
+    def h_price_demand_curve(self):
+        average_price = 316
+        x = [265]
+        y = [6.85]
+
+    def hh_price_demand_curve(self):
+        average_price = 336
+
+    def c_price_demand_curve(self):
+        average_price = 338
+
+    def hc_price_demand_curve(self):
+        average_price = 360
 
 
     def channel_investment(self, euro:float) -> float:
@@ -95,3 +89,4 @@ class Model:
             return euro * self.ad_effect_hc
 
 
+    

@@ -2,10 +2,94 @@ from collections import namedtuple
 from typing import Any, Literal
 import copy
 import numpy as np
+import pandas as pd
 
 from .product import Product
 
+
 YLimit = namedtuple("YLimit", ["group", "design", "feature", "total"])
+
+
+class MarketLocations:
+    def __init__(self, europe:Market, asia:Market) -> None:
+        self.europe = europe
+        self.asia = asia
+        self._nrounds = 2
+        self._index = 0
+
+    def __getitem__(self, key:Literal["europe", "asia"]):
+        return self.__getattribute__(key)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -> Market:
+        if self._index < self._nrounds:
+            if self._index == 0:
+                item = self.europe
+            elif self._index == 1:
+                item = self.asia
+            else: raise IndexError()
+            self._index += 1
+            return item
+        else:
+            raise StopIteration
+    
+
+class MarketHistory:
+    europe: list[Market] = []
+    asia: list[Market] = []
+    columns = ("europe", "asia")
+    rows = (1,2,3)
+
+    def __init__(self) -> None:
+        self._index = 0
+        self._nrounds = 3
+
+
+    def add_round(self, europe:Market, asia:Market):
+        self.europe.append(europe)
+        self.asia.append(asia)
+
+    def loc(self, row:int, column:str) -> Market:
+        row -= 1
+        if column == "europe":
+            return self.europe[row]
+        if column == "asia":
+            return self.asia[row]
+        raise ValueError()
+
+    def row(self, index:int) -> tuple[Market, Market]:
+        return (self.europe[index], self.asia[index])
+
+    def column(self, name:str) -> list[Market]:
+        if name == "europe":
+            return self.europe
+        elif name == "asia":
+            return self.asia
+        raise KeyError()
+
+    def rounds(self):
+        return self.IterRounds(self.europe, self.asia)
+
+    class IterRounds:
+        def __init__(self, europe:list[Market], asia:list[Market]) -> None:
+            self._index = 0
+            self._nrounds = 3
+            self.europe = europe
+            self.asia = asia
+
+        def __iter__(self):
+            return self
+
+        def __next__(self) -> tuple[int, Market, Market]:
+            if self._index < self._nrounds:
+                item = (self._index+1, self.europe[self._index], self.asia[self._index])
+                self._index += 1
+                return item
+            else:
+                raise StopIteration
+
 
 class Bins:
 
@@ -13,6 +97,40 @@ class Bins:
         self.low = Market(low)
         self.mid = Market(mid)
         self.high = Market(high)
+
+class Companies:
+
+    def __init__(self, 
+                 pink:list[Product], green:list[Product], grey:list[Product], 
+                 orange:list[Product], blue:list[Product], red:list[Product]) -> None:
+        self.pink = Market(pink)
+        self.green = Market(green)
+        self.grey = Market(grey)
+        self.orange = Market(orange)
+        self.blue = Market(blue)
+        self.red = Market(red)
+
+    def __getitem__(self, key:str) -> Market:
+        key = key.lower()
+        if key not in ["pink", "green", "grey", "orange", "blue", "red"]:
+            raise KeyError(f"No such company {key}")
+        return self.__getattribute__(key)
+
+class Groups:
+
+    def __init__(self, 
+                 households:Market, high_end_households:Market, companies:Market, 
+                 high_end_companies:Market) -> None:
+        self.households = households
+        self.high_end_households =high_end_households
+        self.companies = companies
+        self.high_end_companies = high_end_companies
+
+    def __getitem__(self, key:str) -> Market:
+        key = key.lower()
+        if key not in ["households", "high_end_households", "companies", "high_end_companies"]:
+            raise KeyError(f"No such company {key}")
+        return self.__getattribute__(key)
 
 class Stats:
 
@@ -112,8 +230,17 @@ class Market:
         self.products = products
         self.products.sort(key=lambda p: p.price)
         self.stats: Stats = Stats(self.products.copy())
+        self.brands: list[str] = list(set([p.company for p in self.products]))
 
     # -- GROUP -- #
+    def group(self) -> Groups:
+        return Groups(
+            households=self.households(), 
+            high_end_households=self.high_end_households(), 
+            companies=self.companies(), 
+            high_end_companies=self.high_end_companies()
+        )
+
     def households(self) -> Market:
         return Market([self._only_household_sales(p) for p in self.products if p.households_sales > 0])
     
@@ -210,8 +337,21 @@ class Market:
         mid = source[len(source) // 3:-len(source) // 3]
         high = source[-len(source) // 3:]
         return Bins(low=low, mid=mid, high=high)
-    
 
+
+    # -- COMPANY -- #
+    def company(self):
+        source = self.products.copy()
+        pink = [p for p in source if p.company == "Pink"]
+        green = [p for p in source if p.company == "Green"]
+        grey = [p for p in source if p.company == "Grey"]
+        orange = [p for p in source if p.company == "Orange"]
+        blue = [p for p in source if p.company == "Blue"]
+        red = [p for p in source if p.company == "Red"]
+
+        return Companies(pink=pink, green=green, grey=grey, orange=orange, blue=blue, red=red)
+
+    
     # -- GRAPH -- #
     def y_lim(self) -> YLimit:
         """Returns largest sales numbers by main metrics"""

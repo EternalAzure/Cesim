@@ -5,18 +5,20 @@ import pandas as pd
 import textwrap
 import itertools
 from contextlib import suppress
+from pprint import pprint
 
-from .market import Market
+from .market import Market, MarketHistory
 from .product import Product
 
 
 
 class Analyse:
 
-    def __init__(self, market:Market, round:int) -> None:
-        self.market: Market = market
+    def __init__(self, market_history:MarketHistory, round:int, area:Literal["europe", "asia"]) -> None:
+        self.market_history: MarketHistory = market_history
+        self.market: Market = market_history.loc(round, area)
         self.title: str = f"Round {round}"
-        self.compare = Comparisons(market, round)
+        self.compare = Comparisons(self.market, round)
 
     # -- DESIGN -- #
     def design(self):
@@ -839,25 +841,69 @@ class Analyse:
 
     # -- ADVERTIZING -- #
     def advertizing(self):
+        #self.ad_effect_teams()
         #self.all_advertizing()
-        self.advertizing_x_sales()
-        self.all_awareness()
-        self.awareness_x_sales()
+        self.awareness_to_intentions_history_by_teams_and_groups()
+        #self.money_to_awareness_history_by_teams_and_groups()
+        #self.team_ad_effect_history()
+        #self.advertizing_x_sales()
+        #self.all_awareness()
+        #self.awareness_x_sales()
         plt.show()
         
     def all_advertizing(self):
-        source = self.market.products.copy()
-        source.sort(key=lambda p: p.advertizing)
-        x = [p.advertizing for p in source]
-        y = [p.total_sales for p in source]
+        x_pink = [p.advertizing for p in self.market.company().pink.products]
+        x_green = [p.advertizing for p in self.market.company().green.products]
+        x_grey = [p.advertizing for p in self.market.company().grey.products]
+        x_orange = [p.advertizing for p in self.market.company().orange.products]
+        x_blue = [p.advertizing for p in self.market.company().blue.products]
+        x_red = [p.advertizing for p in self.market.company().red.products]
+
+        y_pink = [p.total_sales for p in self.market.company().pink.products]
+        y_green = [p.total_sales for p in self.market.company().green.products]
+        y_grey = [p.total_sales for p in self.market.company().grey.products]
+        y_orange = [p.total_sales for p in self.market.company().orange.products]
+        y_blue = [p.total_sales for p in self.market.company().blue.products]
+        y_red = [p.total_sales for p in self.market.company().red.products]
 
         fig, ax = plt.subplots()
         fig.suptitle(self.title)
 
-        ax.plot(x, y)
-        ax.set_title("All Advertizing")
+        ax.scatter(x_pink, y_pink, c="tab:pink")
+        ax.scatter(x_green, y_green, c="tab:green")
+        ax.scatter(x_grey, y_grey, c="tab:grey")
+        ax.scatter(x_orange, y_orange, c="tab:orange")
+        ax.scatter(x_blue, y_blue, c="tab:blue")
+        ax.scatter(x_red, y_red, c="tab:red")
+
+        z = np.polyfit(x_pink, y_pink, 1)
+        p = np.poly1d(z)
+        ax.plot(x_pink, p(x_pink), color="pink", linewidth=2, linestyle="--")
+
+        z = np.polyfit(x_green, y_green, 1)
+        p = np.poly1d(z)
+        ax.plot(x_green, p(x_green), color="green", linewidth=2, linestyle="--")
+
+        z = np.polyfit(x_grey, y_grey, 1)
+        p = np.poly1d(z)
+        ax.plot(x_grey, p(x_grey), color="grey", linewidth=2, linestyle="--")
+
+        z = np.polyfit(x_orange, y_orange, 1)
+        p = np.poly1d(z)
+        ax.plot(x_orange, p(x_orange), color="orange", linewidth=2, linestyle="--")
+
+        z = np.polyfit(x_blue, y_blue, 1)
+        p = np.poly1d(z)
+        ax.plot(x_blue, p(x_blue), color="blue", linewidth=2, linestyle="--")
+
+        z = np.polyfit(x_red, y_red, 1)
+        p = np.poly1d(z)
+        ax.plot(x_red, p(x_red), color="red", linewidth=2, linestyle="--")
+                       # 1200, 140     3100, 340 k=0.105
+        ax.set_title("Teams Advertizing")
         ax.set_xlabel("advertizing €")
         ax.set_ylabel("sales k")
+        ax.set_ylim(0)
         
     def all_awareness(self):
         source = self.market.products.copy()
@@ -1238,6 +1284,253 @@ class Analyse:
         ax[1,1].set_ylim(0)
 
         fig.tight_layout()
+
+    def team_ad_effect_history(self):
+        fig, ax = plt.subplots(2, 2)
+
+        # € to Awareness, EUROPE
+        blue = [1.527, 0.011]
+        green = [-0.080, 0.023, 0.014]
+        grey = [0.049, 0.038, 0.072]
+        orange = [0.066, 0.052, 0.027]
+        pink = [0.105, -0.004]
+        red = [0.063, -0.021, 0.016]
+
+        ax[0,0].plot([2,3], blue, color="blue", label="blue")
+        ax[0,0].plot([1,2,3], green, color="green", label="green")
+        ax[0,0].plot([1,2,3], grey, color="grey", label="grey")
+        ax[0,0].plot([1,2,3], orange, color="orange", label="orange")
+        ax[0,0].plot([1,2], pink, color="pink", label="pink")
+        ax[0,0].plot([1,2,3], red, color="red", label="red")
+
+        ax[0,0].set_title("Awareness per euro, Europe")
+        ax[0,0].set_xlabel("Rounds")
+        ax[0,0].set_ylabel("Awareness per euro")
+        ax[0,0].legend(loc="upper left")
+        ax[0,0].set_xticks([1,2,3])
+
+        # € to Awareness, ASIA
+        blue = [2.283, 0.013]
+        green = [0.069, 0.020]
+        grey = [0.164]
+        orange = [0.046, 0.011, 0.003]
+        pink = []
+        red = [0.108, 0.066]
+
+        ax[0,1].plot([2,3], blue, color="blue", label="blue")
+        ax[0,1].plot([1,2], green, color="green", label="green")
+        ax[0,1].plot([1], grey, color="grey", label="grey")
+        ax[0,1].plot([1,2,3], orange, color="orange", label="orange")
+        ax[0,1].plot([], pink, color="pink", label="pink")
+        ax[0,1].plot([1,2], red, color="red", label="red")
+
+        ax[0,1].set_title("Awareness per euro, Asia")
+        ax[0,1].set_xlabel("Rounds")
+        ax[0,1].set_ylabel("Awareness per euro")
+        ax[0,1].legend(loc="upper left")
+        ax[0,1].set_xticks([1,2,3])
+
+        # Awareness to Sales, EUROPE
+        blue = [0.197, 0.155]
+        green = [0.231, 0.155, 0.146]
+        grey = [0.123, 0.223, 0.194]
+        orange = [0.162, 0.182, 0.179]
+        pink = [0.170, 0.182, -0.288]
+        red = [0.183, 0.282, 0.153]
+
+        ax[1,0].plot([2,3], blue, color="blue", label="blue")
+        ax[1,0].plot([1,2,3], green, color="green", label="green")
+        ax[1,0].plot([1,2,3], grey, color="grey", label="grey")
+        ax[1,0].plot([1,2,3], orange, color="orange", label="orange")
+        ax[1,0].plot([1,2,3], pink, color="pink", label="pink")
+        ax[1,0].plot([1,2,3], red, color="red", label="red")
+
+        ax[1,0].set_title("Sales per Awareness, Europe")
+        ax[1,0].set_xlabel("Rounds")
+        ax[1,0].set_ylabel("Sales per Awareness")
+        ax[1,0].legend(loc="upper left")
+        ax[1,0].set_xticks([1,2,3])
+
+        # Awareness to Sales, ASIA
+        blue = [0.197, 0.173]
+        green = [0.162, 0.169]
+        grey = [0.197]
+        orange = [0.135, 0.129, 0.154]
+        pink = []
+        red = [0.219, 0.183]
+
+        ax[1,1].plot([2,3], blue, color="blue", label="blue")
+        ax[1,1].plot([1,2], green, color="green", label="green")
+        ax[1,1].plot([1], grey, color="grey", label="grey")
+        ax[1,1].plot([1,2,3], orange, color="orange", label="orange")
+        ax[1,1].plot([], pink, color="pink", label="pink")
+        ax[1,1].plot([1,2], red, color="red", label="red")
+
+        ax[1,1].set_title("Sales per Awareness, Asia")
+        ax[1,1].set_xlabel("Rounds")
+        ax[1,1].set_ylabel("Sales per Awareness")
+        ax[1,1].legend(loc="upper left")
+        ax[1,1].set_xticks([1,2,3])
+
+        fig.tight_layout()
+        plt.show()
+
+    def ad_effect_teams(self):
+        brands = [b.lower() for b in self.market.brands]
+        brands.sort()
+        slopes = dict()
+        for brand in brands:
+            x = [p.total_awareness for p in self.market.company()[brand].products]
+            y = [p.total_sales for p in self.market.company()[brand].products]
+            z = np.polyfit(x, y, 1)
+            p = np.poly1d(z)
+            slope = self._calc_k(x[0], x[-1], p(x)[0], p(x)[-1])
+            slopes[brand] = slope
+        
+        print(brands)
+        pprint(slopes, sort_dicts=False)
+        return slopes
+
+    def money_to_awareness_history_by_teams_and_groups(self):
+        groups = ["households", "high_end_households", "companies", "high_end_companies"]
+        for group in groups:
+            fig, ax = plt.subplots(2,2)
+            fig.suptitle(f"{group.capitalize().replace("_", " ")}")
+
+            for j, area in enumerate(self.market_history.columns):
+                y_results_ma = dict()
+                y_results_as = dict()
+                x_results_ma = dict()
+                x_results_as = dict()
+
+                for index, europe, asia in self.market_history.rounds():
+                    market = europe if area == "europe" else asia
+                    for brand in market.brands:
+                        if brand not in y_results_ma.keys(): y_results_ma[brand] = []
+                        if brand not in y_results_as.keys(): y_results_as[brand] = []
+                        if brand not in x_results_ma.keys(): x_results_ma[brand] = []
+                        if brand not in x_results_as.keys(): x_results_as[brand] = []
+
+                        products = market.company()[brand].group()[group].products
+                        ma_result = self._money_to_awareness(products)
+                        as_result = self._awareness_to_sales(products)
+
+                        if not bool(np.isnan(ma_result)):
+                            y_results_ma[brand].append(ma_result)
+                            x_results_ma[brand].append(index)
+                            
+                        if not bool(np.isnan(ma_result)):
+                            y_results_as[brand].append(as_result)
+                            x_results_as[brand].append(index)
+
+
+                for brand, value in y_results_ma.items():
+                    ax[0,j].plot(x_results_ma[brand], value, label=brand)
+                for brand, value in y_results_as.items():
+                    ax[1,j].plot(x_results_as[brand], value, label=brand)
+
+                ax[0,j].set_title(f"Awareness per euro, {area}")
+                ax[0,j].set_xlabel("Rounds")
+                ax[0,j].set_xticks([i for i in range(1, self.market_history._nrounds+1)])
+
+                ax[1,j].set_title(f"Sales per Awareness, {area}")
+                ax[1,j].set_xlabel("Rounds")
+                ax[1,j].set_xticks([i for i in range(1, self.market_history._nrounds+1)])
+                fig.tight_layout()
+
+
+        plt.show()
+
+    def awareness_to_intentions_history_by_teams_and_groups(self):
+        groups = ["households", "high_end_households", "companies", "high_end_companies"]
+        for group in groups:
+            fig, ax = plt.subplots(2,2)
+            fig.suptitle(f"{group.capitalize().replace("_", " ")}")
+
+            for j, area in enumerate(self.market_history.columns):
+                y_results_ma = dict()
+                y_results_as = dict()
+                x_results_ma = dict()
+                x_results_as = dict()
+
+                for index, europe, asia in self.market_history.rounds():
+                    market = europe if area == "europe" else asia
+                    for brand in market.brands:
+                        if brand not in y_results_ma.keys(): y_results_ma[brand] = []
+                        if brand not in y_results_as.keys(): y_results_as[brand] = []
+                        if brand not in x_results_ma.keys(): x_results_ma[brand] = []
+                        if brand not in x_results_as.keys(): x_results_as[brand] = []
+
+                        products = market.company()[brand].group()[group].products
+                        ma_result = self._awareness_to_intentions(products)
+                        as_result = self._intentions_to_sales(products)
+
+                        if not bool(np.isnan(ma_result)):
+                            y_results_ma[brand].append(ma_result)
+                            x_results_ma[brand].append(index)
+                            
+                        if not bool(np.isnan(ma_result)):
+                            y_results_as[brand].append(as_result)
+                            x_results_as[brand].append(index)
+
+
+                for brand, value in y_results_ma.items():
+                    ax[0,j].plot(x_results_ma[brand], value, label=brand)
+                for brand, value in y_results_as.items():
+                    ax[1,j].plot(x_results_as[brand], value, label=brand)
+
+                ax[0,j].set_title(f"Intentions per Awareness, {area}")
+                ax[0,j].set_xlabel("Rounds")
+                ax[0,j].set_xticks([i for i in range(1, self.market_history._nrounds+1)])
+
+                ax[1,j].set_title(f"Sales per Intention, {area}")
+                ax[1,j].set_xlabel("Rounds")
+                ax[1,j].set_xticks([i for i in range(1, self.market_history._nrounds+1)])
+                fig.tight_layout()
+
+
+        plt.show()
+
+
+    def _money_to_awareness(self, products:list[Product]):
+        x = [p.advertizing for p in products]
+        y = [p.total_awareness for p in products]
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        slope = self._calc_k(x[0], x[-1], p(x)[0], p(x)[-1])
+        return slope
+
+    def _awareness_to_sales(self, products:list[Product]):
+        x = [p.total_awareness for p in products]
+        y = [p.total_sales for p in products]
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        slope = self._calc_k(x[0], x[-1], p(x)[0], p(x)[-1])
+        return slope
+
+    def _awareness_to_intentions(self, products:list[Product]):
+        x = [p.advertizing for p in products]
+        y = [p.total_awareness for p in products]
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        slope = self._calc_k(x[0], x[-1], p(x)[0], p(x)[-1])
+        return slope
+
+    def _intentions_to_sales(self, products:list[Product]):
+        x = [p.total_intentions for p in products]
+        y = [p.total_sales for p in products]
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        slope = self._calc_k(x[0], x[-1], p(x)[0], p(x)[-1])
+        return slope
+
+
+    
+    def _calc_k(self, x1, x2, y1, y2):
+        """kulmakerroin"""
+        if x1 == x2: return np.nan
+        k = (y2-y1) / (x2-x1)
+        return k
   
     # -- CHANNEL INVESTMENTS -- #
     def channel_investments(self):
@@ -1271,7 +1564,6 @@ class Analyse:
         # x 1400, y 231.4
         #    800     14.9
         #    14.9 / 800 = 0.01862
-
 
     def channel_investments_hc(self):
         source = self.market.products.copy()
@@ -1612,6 +1904,157 @@ class Analyse:
 
         plt.show()
 
+    def competion_stack(self, 
+                  camera:bool=False, memory:bool=False, display:bool=False, resistance:bool=False, security:bool=False, 
+                  classic:bool=False, avant_garde:bool=False, sport:bool=False):
+        
+        source = self.market
+        if camera:
+            source = source.camera()
+        if memory:
+            source = source.memory()
+        if display:
+            source = source.display()
+        if resistance:
+            source = source.resistance()
+        if security:
+            source = source.security()
+
+        if sport:
+            source = source.sport()
+        if avant_garde:
+            source = source.avant_garde()
+        if classic:
+            source = source.classic()
+
+        # COMPETITION #
+        x_classics = [p.price for p in source.classic().products]
+        x_avants = [p.price for p in source.avant_garde().products]
+        x_sports = [p.price for p in source.sport().products]
+        y_classics = [p.performance + p.battery for p in source.classic().products]
+        y_avants = [p.performance + p.battery for p in source.avant_garde().products]
+        y_sports = [p.performance + p.battery for p in source.sport().products]
+
+        # DEMAND #
+        x_price = [p.price for p in source.products]
+        y_h_sales = [p.households_sales for p in source.products]
+        y_hh_sales = [p.high_end_households_sales for p in source.products]
+        y_c_sales = [p.companies_sales for p in source.products]
+        y_hc_sales = [p.high_end_companies_sales for p in source.products]
+        y_total_sales = [p.total_sales for p in source.products]
+
+        # PLOT COMPETITION #
+        fig, ax = plt.subplots()
+        ax.scatter(x_classics, y_classics, c="tab:blue")
+        ax.scatter(x_avants, y_avants, c="tab:orange")
+        ax.scatter(x_sports, y_sports, c="tab:green")
+        ax.set_xlabel("price €")
+        ax.set_ylabel("specs")
+
+        # PLOT DEMAND #
+        ax2 = ax.twinx()
+        y = np.vstack([y_h_sales, y_hh_sales, y_c_sales, y_hc_sales])
+        ax2.stackplot(x_price, y, alpha=0.2, colors=["purple", "orange", "green", "blue"])
+
+        ax2.set_ylabel("sales k")
+        ax2.legend(loc="upper left")
+
+        plt.show()
+
+    def price_demand(self, 
+                  camera:bool=False, memory:bool=False, display:bool=False, resistance:bool=False, security:bool=False, 
+                  classic:bool=False, avant_garde:bool=False, sport:bool=False):
+        
+        source = self.market
+        if camera:
+            source = source.camera()
+        if memory:
+            source = source.memory()
+        if display:
+            source = source.display()
+        if resistance:
+            source = source.resistance()
+        if security:
+            source = source.security()
+
+        if sport:
+            source = source.sport()
+        if avant_garde:
+            source = source.avant_garde()
+        if classic:
+            source = source.classic()
+
+        # COMPETITION #
+        x_classics = [p.price for p in source.classic().products]
+        x_avants = [p.price for p in source.avant_garde().products]
+        x_sports = [p.price for p in source.sport().products]
+        y_classics = [p.performance + p.battery for p in source.classic().products]
+        y_avants = [p.performance + p.battery for p in source.avant_garde().products]
+        y_sports = [p.performance + p.battery for p in source.sport().products]
+
+        # DEMAND #
+        x_price = [p.price for p in source.products]
+        y_h_sales = [p.households_sales for p in source.products]
+        y_hh_sales = [p.high_end_households_sales for p in source.products]
+        y_c_sales = [p.companies_sales for p in source.products]
+        y_hc_sales = [p.high_end_companies_sales for p in source.products]
+        y_total_sales = [p.total_sales for p in source.products]
+
+        # PLOT COMPETITION #
+        fig, ax = plt.subplots(2,2)
+        ax[0,0].scatter(x_classics, y_classics, c="tab:blue")
+        ax[0,0].scatter(x_avants, y_avants, c="tab:orange")
+        ax[0,0].scatter(x_sports, y_sports, c="tab:green")
+        ax[0,0].set_xlabel("price €")
+        ax[0,0].set_ylabel("specs")
+
+        ax[0,1].scatter(x_classics, y_classics, c="tab:blue")
+        ax[0,1].scatter(x_avants, y_avants, c="tab:orange")
+        ax[0,1].scatter(x_sports, y_sports, c="tab:green")
+        ax[0,1].set_xlabel("price €")
+        ax[0,1].set_ylabel("specs")
+
+        ax[1,0].scatter(x_classics, y_classics, c="tab:blue")
+        ax[1,0].scatter(x_avants, y_avants, c="tab:orange")
+        ax[1,0].scatter(x_sports, y_sports, c="tab:green")
+        ax[1,0].set_xlabel("price €")
+        ax[1,0].set_ylabel("specs")
+
+        ax[1,1].scatter(x_classics, y_classics, c="tab:blue")
+        ax[1,1].scatter(x_avants, y_avants, c="tab:orange")
+        ax[1,1].scatter(x_sports, y_sports, c="tab:green")
+        ax[1,1].set_xlabel("price €")
+        ax[1,1].set_ylabel("specs")
+
+        # PLOT DEMAND #
+
+        y_h = np.vstack([y_h_sales])
+        y_hh = np.vstack([y_hh_sales])
+        y_c = np.vstack([y_c_sales])
+        y_hc = np.vstack([y_hc_sales])
+        
+        axh = ax[0,0].twinx()
+        axh.stackplot(x_price, y_h, alpha=0.2, colors=["purple"], labels=["Households"])
+        axh.set_ylabel("sales k")
+        axh.legend(loc="upper left")
+        
+        axhh = ax[0,1].twinx()
+        axhh.stackplot(x_price, y_hh, alpha=0.2, colors=["orange"], labels=["HE Households"])
+        axhh.set_ylabel("sales k")
+        axhh.legend(loc="upper left")
+        
+        axc = ax[1,0].twinx()
+        axc.stackplot(x_price, y_c, alpha=0.2, colors=["green"], labels=["Companies"])
+        axc.set_ylabel("sales k")
+        axc.legend(loc="upper left")
+        
+        axhc = ax[1,1].twinx()
+        axhc.stackplot(x_price, y_hc, alpha=0.2, colors=["blue"], labels=["HE Companies"])
+        axhc.set_ylabel("sales k")
+        axhc.legend(loc="upper left")
+
+        plt.show()
+
     # -- DEMAND -- #
     def demand(self, market:Market):
 
@@ -1670,8 +2113,6 @@ class Analyse:
                 product.online,
             ]
         return situation
-
-# 598,6
 
 
 
