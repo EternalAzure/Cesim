@@ -230,7 +230,7 @@ class Market:
         self.products = products
         self.products.sort(key=lambda p: p.price)
         self.stats: Stats = Stats(self.products.copy())
-        self.brands: list[str] = list(set([p.company for p in self.products]))
+        self.brands: list[str] = list(set([p.brand for p in self.products]))
 
     # -- GROUP -- #
     def group(self) -> Groups:
@@ -340,14 +340,14 @@ class Market:
 
 
     # -- COMPANY -- #
-    def company(self):
+    def brand(self):
         source = self.products.copy()
-        pink = [p for p in source if p.company == "Pink"]
-        green = [p for p in source if p.company == "Green"]
-        grey = [p for p in source if p.company == "Grey"]
-        orange = [p for p in source if p.company == "Orange"]
-        blue = [p for p in source if p.company == "Blue"]
-        red = [p for p in source if p.company == "Red"]
+        pink = [p for p in source if p.brand == "Pink"]
+        green = [p for p in source if p.brand == "Green"]
+        grey = [p for p in source if p.brand == "Grey"]
+        orange = [p for p in source if p.brand == "Orange"]
+        blue = [p for p in source if p.brand == "Blue"]
+        red = [p for p in source if p.brand == "Red"]
 
         return Companies(pink=pink, green=green, grey=grey, orange=orange, blue=blue, red=red)
 
