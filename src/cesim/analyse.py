@@ -852,19 +852,19 @@ class Analyse:
         plt.show()
         
     def all_advertizing(self):
-        x_pink = [p.advertizing for p in self.market.company().pink.products]
-        x_green = [p.advertizing for p in self.market.company().green.products]
-        x_grey = [p.advertizing for p in self.market.company().grey.products]
-        x_orange = [p.advertizing for p in self.market.company().orange.products]
-        x_blue = [p.advertizing for p in self.market.company().blue.products]
-        x_red = [p.advertizing for p in self.market.company().red.products]
+        x_pink = [p.advertizing for p in self.market.brand().pink.products]
+        x_green = [p.advertizing for p in self.market.brand().green.products]
+        x_grey = [p.advertizing for p in self.market.brand().grey.products]
+        x_orange = [p.advertizing for p in self.market.brand().orange.products]
+        x_blue = [p.advertizing for p in self.market.brand().blue.products]
+        x_red = [p.advertizing for p in self.market.brand().red.products]
 
-        y_pink = [p.total_sales for p in self.market.company().pink.products]
-        y_green = [p.total_sales for p in self.market.company().green.products]
-        y_grey = [p.total_sales for p in self.market.company().grey.products]
-        y_orange = [p.total_sales for p in self.market.company().orange.products]
-        y_blue = [p.total_sales for p in self.market.company().blue.products]
-        y_red = [p.total_sales for p in self.market.company().red.products]
+        y_pink = [p.total_sales for p in self.market.brand().pink.products]
+        y_green = [p.total_sales for p in self.market.brand().green.products]
+        y_grey = [p.total_sales for p in self.market.brand().grey.products]
+        y_orange = [p.total_sales for p in self.market.brand().orange.products]
+        y_blue = [p.total_sales for p in self.market.brand().blue.products]
+        y_red = [p.total_sales for p in self.market.brand().red.products]
 
         fig, ax = plt.subplots()
         fig.suptitle(self.title)
@@ -1380,8 +1380,8 @@ class Analyse:
         brands.sort()
         slopes = dict()
         for brand in brands:
-            x = [p.total_awareness for p in self.market.company()[brand].products]
-            y = [p.total_sales for p in self.market.company()[brand].products]
+            x = [p.total_awareness for p in self.market.brand()[brand].products]
+            y = [p.total_sales for p in self.market.brand()[brand].products]
             z = np.polyfit(x, y, 1)
             p = np.poly1d(z)
             slope = self._calc_k(x[0], x[-1], p(x)[0], p(x)[-1])
@@ -1411,7 +1411,7 @@ class Analyse:
                         if brand not in x_results_ma.keys(): x_results_ma[brand] = []
                         if brand not in x_results_as.keys(): x_results_as[brand] = []
 
-                        products = market.company()[brand].group()[group].products
+                        products = market.brand()[brand].group()[group].products
                         ma_result = self._money_to_awareness(products)
                         as_result = self._awareness_to_sales(products)
 
@@ -1461,7 +1461,7 @@ class Analyse:
                         if brand not in x_results_ma.keys(): x_results_ma[brand] = []
                         if brand not in x_results_as.keys(): x_results_as[brand] = []
 
-                        products = market.company()[brand].group()[group].products
+                        products = market.brand()[brand].group()[group].products
                         ma_result = self._awareness_to_intentions(products)
                         as_result = self._intentions_to_sales(products)
 
@@ -1906,7 +1906,7 @@ class Analyse:
 
     def competion_stack(self, 
                   camera:bool=False, memory:bool=False, display:bool=False, resistance:bool=False, security:bool=False, 
-                  classic:bool=False, avant_garde:bool=False, sport:bool=False):
+                  classic:bool=False, avant_garde:bool=False, sport:bool=False, new_products:list=[]):
         
         source = self.market
         if camera:
@@ -1928,12 +1928,24 @@ class Analyse:
             source = source.classic()
 
         # COMPETITION #
-        x_classics = [p.price for p in source.classic().products]
-        x_avants = [p.price for p in source.avant_garde().products]
-        x_sports = [p.price for p in source.sport().products]
-        y_classics = [p.performance + p.battery for p in source.classic().products]
-        y_avants = [p.performance + p.battery for p in source.avant_garde().products]
-        y_sports = [p.performance + p.battery for p in source.sport().products]
+        if new_products:
+            x_classics = [p.price for p in source.classic().products if p.brand != "Pink"]
+            x_avants = [p.price for p in source.avant_garde().products if p.brand != "Pink"]
+            x_sports = [p.price for p in source.sport().products  if p.brand != "Pink"]
+            y_classics = [p.performance + p.battery for p in source.classic().products if p.brand != "Pink"]
+            y_avants = [p.performance + p.battery for p in source.avant_garde().products if p.brand != "Pink"]
+            y_sports = [p.performance + p.battery for p in source.sport().products if p.brand != "Pink"]
+        else:
+            x_classics = [p.price for p in source.classic().products]
+            x_avants = [p.price for p in source.avant_garde().products]
+            x_sports = [p.price for p in source.sport().products ]
+            y_classics = [p.performance + p.battery for p in source.classic().products]
+            y_avants = [p.performance + p.battery for p in source.avant_garde().products]
+            y_sports = [p.performance + p.battery for p in source.sport().products]
+
+        # HYPOTETICAL
+        x_hypotetical = [n[0] for n in new_products]
+        y_hypotetical = [n[1] for n in new_products]
 
         # DEMAND #
         x_price = [p.price for p in source.products]
@@ -1951,6 +1963,9 @@ class Analyse:
         ax.set_xlabel("price €")
         ax.set_ylabel("specs")
 
+        # PLOT HYPOTETICAL
+        ax.scatter(x_hypotetical, y_hypotetical, c="tab:pink")
+
         # PLOT DEMAND #
         ax2 = ax.twinx()
         y = np.vstack([y_h_sales, y_hh_sales, y_c_sales, y_hc_sales])
@@ -1960,6 +1975,8 @@ class Analyse:
         ax2.legend(loc="upper left")
 
         plt.show()
+
+    # -- DEMAND -- #
 
     def price_demand(self, 
                   camera:bool=False, memory:bool=False, display:bool=False, resistance:bool=False, security:bool=False, 
@@ -2027,35 +2044,51 @@ class Analyse:
         ax[1,1].set_ylabel("specs")
 
         # PLOT DEMAND #
+        divitions = 11
+        y_h_ = np.array_split(y_h_sales, divitions)
+        y_hh_ = np.array_split(y_hh_sales, divitions)
+        y_c_ = np.array_split(y_c_sales, divitions)
+        y_hc_ = np.array_split(y_hc_sales, divitions)
 
-        y_h = np.vstack([y_h_sales])
-        y_hh = np.vstack([y_hh_sales])
-        y_c = np.vstack([y_c_sales])
-        y_hc = np.vstack([y_hc_sales])
+        y_h = [sum(p) / source.households().total * 100 for p in y_h_]
+        y_hh = [sum(p) / source.high_end_households().total * 100 for p in y_hh_]
+        y_c = [sum(p) / source.companies().total * 100 for p in y_c_]
+        y_hc = [sum(p) / source.high_end_companies().total * 100 for p in y_hc_]
+
+        x_range = self.market.stats.max_price() - self.market.stats.min_price()
+        x_step = x_range / divitions
+        x_start = self.market.stats.min_price()
+        x = [x_start]
         
+        for i in range(1, divitions):
+            x.insert(i, x[i-1] + x_step)
         axh = ax[0,0].twinx()
-        axh.stackplot(x_price, y_h, alpha=0.2, colors=["purple"], labels=["Households"])
+        axh.bar(x, y_h, alpha=0.2, color=["purple"], width=x_step)
         axh.set_ylabel("sales k")
         axh.legend(loc="upper left")
+        print("")
+        print([round(_) for _ in x])
+        print("")
+        print([round(float(_)) for _ in y_hc])
+        print("")
         
         axhh = ax[0,1].twinx()
-        axhh.stackplot(x_price, y_hh, alpha=0.2, colors=["orange"], labels=["HE Households"])
+        axhh.bar(x, y_hh, alpha=0.2, color=["orange"], width=x_step)
         axhh.set_ylabel("sales k")
         axhh.legend(loc="upper left")
         
         axc = ax[1,0].twinx()
-        axc.stackplot(x_price, y_c, alpha=0.2, colors=["green"], labels=["Companies"])
+        axc.bar(x, y_c, alpha=0.2, color=["green"], width=x_step)
         axc.set_ylabel("sales k")
         axc.legend(loc="upper left")
         
         axhc = ax[1,1].twinx()
-        axhc.stackplot(x_price, y_hc, alpha=0.2, colors=["blue"], labels=["HE Companies"])
+        axhc.bar(x, y_hc, alpha=0.2, color=["blue"], width=x_step)
         axhc.set_ylabel("sales k")
         axhc.legend(loc="upper left")
 
         plt.show()
 
-    # -- DEMAND -- #
     def demand(self, market:Market):
 
         situation = pd.DataFrame(columns=[
