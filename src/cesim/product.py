@@ -1,12 +1,25 @@
 from dataclasses import dataclass
+from typing import Literal
 
+@dataclass
+class Phone:
+    price:float
+    variable_unit_cost:float
 
+    performance:int
+    battery:int
+    camera:bool
+    memory:bool
+    display:bool
+    resistance:bool
+    security:bool
+    design:Literal["Classic", "Avant garde", "Sport"]
 
 @dataclass
 class Product:
 
     name:str
-    company:str
+    brand:str
     price:float
     variable_unit_cost:float
 
