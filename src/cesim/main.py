@@ -4,9 +4,10 @@ from typing import Any
 import xlrd
 import pandas as pd
 
-from .product import Product
-from .market import Market
+from .product import Product, Phone
+from .market import Market, MarketHistory
 from .analyse import Analyse, DisplayPhone
+from .model import Simulation
 
 
 
@@ -223,87 +224,111 @@ def read_product_asia(sheet, coln:int) -> Product:
 
     return product
 
+def load_markets() -> MarketHistory:
+    book1 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r01.xls")
+    book2 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r02.xls")
+    book3 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r03.xls")
+    books = [book1, book2, book3]
+
+    market_data = MarketHistory()
+    for j, book in enumerate(books, 1):
+        sheet = book.sheet_by_index(0)
+
+        product_column_indexes_europe:list[int] = []
+        for i, name in enumerate(read_row_str(sheet, 2), 1):
+            if len(name) > 0:
+                product_column_indexes_europe.append(i)
+
+        product_column_indexes_asia:list[int] = []
+        for i, name in enumerate(read_row_str(sheet, 41), 1):
+            if len(name) > 0:
+                product_column_indexes_asia.append(i)
+
+        products_europe:list[Product] = []
+        for index in product_column_indexes_europe:
+            products_europe.append(read_product_europe(sheet, index))
+
+        products_asia:list[Product] = []
+        for index in product_column_indexes_asia:
+            products_asia.append(read_product_asia(sheet, index))
+
+        market_data.add_round(Market(products_europe), Market(products_asia))
+    
+    return market_data
+
+
+
 
 def main() -> None:
     round = int(input("Round: "))
-    if round == 1:
-        book = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r01.xls")
-    elif round == 2:
-        book = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r02.xls")
-    elif round == 3:
-        book = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r03.xls")
-    elif round == 4:
-        book = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r04.xls")
-    else: raise ValueError("Round must me a positive integer")
-    sheet = book.sheet_by_index(0)
 
-    product_column_indexes_europe:list[int] = []
-    for i, name in enumerate(read_row_str(sheet, 2), 1):
-        if len(name) > 0:
-            product_column_indexes_europe.append(i)
-
-    product_column_indexes_asia:list[int] = []
-    for i, name in enumerate(read_row_str(sheet, 41), 1):
-        if len(name) > 0:
-            product_column_indexes_asia.append(i)
-
-    products_europe:list[Product] = []
-    for index in product_column_indexes_europe:
-        products_europe.append(read_product_europe(sheet, index))
-
-    products_asia:list[Product] = []
-    for index in product_column_indexes_asia:
-        products_asia.append(read_product_asia(sheet, index))
-
-    market_europe = Market(products_europe)
-    market_asia = Market(products_asia)
-    analyse_europe = Analyse(market_europe, round)
-    analyse_asia = Analyse(market_asia, round)
+    data = load_markets()
+    analyse_asia = Analyse(data, round, "asia")
+    analyse_europe = Analyse(data, round, "europe")
 
 
     # -- ALOITA TÄSTÄ -- #
-    # Löydä suosituimmat tyylit
+    # SUOSITUIMMAT TYYLIT
     #analyse_asia.design()
 
-    # Löydä suosituimmat ominaisuudet
+    # SUOSITUIMMAT OMINAISUUDET
     #analyse_asia.feature()
     #analyse_europe.design_feature()
     
-    # Löydä tehon ja akun suhde kysyntään
-    #analyse_europe.performance()
-    #analyse_europe.battery()
+    # TEHON JA AKUN SUHDE KYSYNTÄÄN
+    #analyse_asia.performance()
+    #analyse_asia.battery()
     #analyse_europe.performance_per_euro()
     #analyse_europe.battery_per_euro()
 
-    # Löydä hinnan suhde kysyntään
+    # HINNAN SUHDE KYSYNTÄÄN
     #analyse_europe.price()
     #analyse_europe.margin_x_sales()
 
     # Löydä suhteellisen hinnan suhde kysyntään
     #analyse_europe.cumulative()
 
-    # Löydä markkinoinnin vaikutus
-    analyse_europe.advertizing()
+    # MARKKINOINNIN VAIKUTUS
+    #analyse_europe.advertizing()
     #analyse_europe.advertizing_relook()
     #analyse_europe.channel_investments()
 
-    # Löydä voitot
+    # VOITOT
     #analyse_europe.profit()
     #analyse_europe.profit_x_specs()
 
-    # Vertaa tuotteita
+    # TUOTEVERTAILU
     #analyse_europe.compare.winners_across_segments()
     #analyse_europe.compare.high_price_segment()
     #analyse_europe.compare.mid_price_segment()
     #analyse_europe.compare.low_price_segment()
 
-    # Kartoita kilpailu
-    #segment = market_europe.camera().memory().security()
+    # KILPAILU
+    #segment = data.loc(1, "europe")
     #result = analyse_europe.demand(segment)
     #print(result)
-    #analyse_europe.competion(camera=True, memory=True, security=True)
+    new_products = [(460, 277), (425, 265), (395, 250), (370, 240), (345, 235), (299, 220)]
+    #analyse_europe.competion_stack(new_products=new_products)
+    #analyse_europe.price_demand()
 
-    print(market_europe.households().total)
+    # SIMULOI
+
+    phone = Phone(
+        299,
+        224.04,
+        110,
+        110,
+        True,
+        True,
+        True,
+        False,
+        True,
+        "Classic"
+    )
+
+    sim = Simulation()
+    profit = sim.play(phone)
+
     
     pass
 
