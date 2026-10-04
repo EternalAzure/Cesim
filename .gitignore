@@ -5,6 +5,10 @@ build/
 dist/
 wheels/
 *.egg-info
+**.~lock.results-r04.xls#
+**.~lock.results-r03.xls#
+**.~lock.results-r02.xls#
+**.~lock.results-r01.xls#
 
 # Virtual environments
 .venv
