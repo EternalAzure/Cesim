@@ -3,6 +3,7 @@ from typing import Any
 
 import xlrd
 import pandas as pd
+import numpy as np
 
 from .product import Product, Phone
 from .market import Market, MarketHistory
@@ -228,7 +229,9 @@ def load_markets() -> MarketHistory:
     book1 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r01.xls")
     book2 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r02.xls")
     book3 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r03.xls")
-    books = [book1, book2, book3]
+    book4 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r04.xls")
+    book5 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r05.xls")
+    books = [book1, book2, book3, book4, book5]
 
     market_data = MarketHistory()
     for j, book in enumerate(books, 1):
@@ -257,7 +260,19 @@ def load_markets() -> MarketHistory:
     return market_data
 
 
+def calculate_line(x1:int, x2):
+    """Used once"""
+    #print(f"{x1=} {x2=}")
+    y1 = float(input("y1: "))
+    y2 = float(input("y2: "))
 
+    x = [x1, x2] #NOTE change this
+    y = [y1, y2]
+    slope, intercept = np.polyfit(x, y, 1)
+    slope = float(round(slope, 4))
+    intercept = float(round(intercept, 4))
+
+    print(f"{slope=} {intercept=}")
 
 def main() -> None:
     round = int(input("Round: "))
@@ -272,7 +287,7 @@ def main() -> None:
     #analyse_asia.design()
 
     # SUOSITUIMMAT OMINAISUUDET
-    #analyse_asia.feature()
+    #analyse_europe.feature()
     #analyse_europe.design_feature()
     
     # TEHON JA AKUN SUHDE KYSYNTÄÄN
@@ -290,6 +305,7 @@ def main() -> None:
 
     # MARKKINOINNIN VAIKUTUS
     #analyse_europe.advertizing()
+    #analyse_europe.all_awareness()
     #analyse_europe.advertizing_relook()
     #analyse_europe.channel_investments()
 
@@ -304,38 +320,21 @@ def main() -> None:
     #analyse_europe.compare.low_price_segment()
 
     # KILPAILU
-    #segment = data.loc(1, "europe")
-    #result = analyse_europe.demand(segment)
-    #print(result)
-    new_products = [(460, 277), (425, 265), (395, 250), (370, 240), (345, 235), (299, 220)]
-    #analyse_europe.competion_stack(new_products=new_products)
+    new_products = [(225, 200), (385, 290), (350, 270), (320, 260), (270, 250), (250, 240)]     # Asia
+    new_products = [(250, 200), (370, 290), (335, 270), (320, 260), (300, 250), (275, 240)]     # EU
+    #analyse_europe.competion_stack_by_team()
+    #print(analyse_europe.market.stats.average_battery())
+    #print(analyse_europe.market.stats.average_performance())
     #analyse_europe.price_demand()
+    #analyse_europe.price_deviance_demand()
+
 
     # SIMULOI
-
-    phone = Phone(
-        299,
-        224.04,
-        110,
-        110,
-        True,
-        True,
-        True,
-        False,
-        True,
-        "Classic"
-    )
-
     sim = Simulation()
-    profit = sim.play(phone)
-
-    
-    pass
+    sim.play(data)
 
 
-    # Mallinna kysyntä
-    
-    return
+   
 
 
 

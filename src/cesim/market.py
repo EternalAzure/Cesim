@@ -40,11 +40,11 @@ class MarketHistory:
     europe: list[Market] = []
     asia: list[Market] = []
     columns = ("europe", "asia")
-    rows = (1,2,3)
+    rows = (1,2,3,4,5,6,7,8)
 
     def __init__(self) -> None:
         self._index = 0
-        self._nrounds = 3
+        self._nrounds = 5
 
 
     def add_round(self, europe:Market, asia:Market):
@@ -75,7 +75,7 @@ class MarketHistory:
     class IterRounds:
         def __init__(self, europe:list[Market], asia:list[Market]) -> None:
             self._index = 0
-            self._nrounds = 3
+            self._nrounds = 5
             self.europe = europe
             self.asia = asia
 
@@ -236,22 +236,22 @@ class Market:
     def group(self) -> Groups:
         return Groups(
             households=self.households(), 
-            high_end_households=self.high_end_households(), 
+            high_end_households=self.he_households(), 
             companies=self.companies(), 
-            high_end_companies=self.high_end_companies()
+            high_end_companies=self.he_companies()
         )
 
     def households(self) -> Market:
         return Market([self._only_household_sales(p) for p in self.products if p.households_sales > 0])
     
-    def high_end_households(self) -> Market:
-        return Market([self._only_high_end_household_sales(p) for p in self.products if p.high_end_households_sales > 0])
+    def he_households(self) -> Market:
+        return Market([self._only_high_end_household_sales(p) for p in self.products if p.he_households_sales > 0])
     
     def companies(self) -> Market:
         return Market([self._only_companies_sales(p) for p in self.products if p.companies_sales > 0])
 
-    def high_end_companies(self) -> Market:
-        return Market([self._only_high_end_companies_sales(p) for p in self.products if p.high_end_companies_sales > 0])
+    def he_companies(self) -> Market:
+        return Market([self._only_high_end_companies_sales(p) for p in self.products if p.he_companies_sales > 0])
 
     # -- DESIGN -- #
     def classic(self) -> Market:
@@ -357,9 +357,9 @@ class Market:
         """Returns largest sales numbers by main metrics"""
         largest_group_total: float = max([
             sum([p.households_sales for p in self.products]),
-            sum([p.high_end_households_sales for p in self.products]),
+            sum([p.he_households_sales for p in self.products]),
             sum([p.companies_sales for p in self.products]),
-            sum([p.high_end_companies_sales for p in self.products]),
+            sum([p.he_companies_sales for p in self.products]),
         ])
 
         largest_design_total: float = max([
@@ -386,43 +386,43 @@ class Market:
         if group == "H":
             phones.sort(key=lambda p: p.households_sales)
         if group == "HH":
-            phones.sort(key=lambda p: p.high_end_households_sales)
+            phones.sort(key=lambda p: p.he_households_sales)
         if group == "C":
             phones.sort(key=lambda p: p.companies_sales)
         if group == "HC":
-            phones.sort(key=lambda p: p.high_end_companies_sales)
+            phones.sort(key=lambda p: p.he_companies_sales)
         return phones[-1]
 
 
     def _only_household_sales(self, product:Product) -> Product:
         new_product = copy.deepcopy(product)
         new_product.total_sales = product.households_sales
-        new_product.high_end_households_sales = 0
+        new_product.he_households_sales = 0
         new_product.companies_sales = 0
-        new_product.high_end_companies_sales = 0
+        new_product.he_companies_sales = 0
         return new_product
 
     def _only_high_end_household_sales(self, product:Product) -> Product:
         new_product = copy.deepcopy(product)
-        new_product.total_sales = product.high_end_households_sales
+        new_product.total_sales = product.he_households_sales
         new_product.households_sales = 0
         new_product.companies_sales = 0
-        new_product.high_end_companies_sales = 0
+        new_product.he_companies_sales = 0
         return new_product
 
     def _only_companies_sales(self, product:Product) -> Product:
         new_product = copy.deepcopy(product)
         new_product.total_sales = product.companies_sales
         new_product.households_sales = 0
-        new_product.high_end_households_sales = 0
-        new_product.high_end_companies_sales = 0
+        new_product.he_households_sales = 0
+        new_product.he_companies_sales = 0
         return new_product
 
     def _only_high_end_companies_sales(self, product:Product) -> Product:
         new_product = copy.deepcopy(product)
-        new_product.total_sales = product.high_end_companies_sales
+        new_product.total_sales = product.he_companies_sales
         new_product.households_sales = 0
-        new_product.high_end_households_sales = 0
+        new_product.he_households_sales = 0
         new_product.companies_sales = 0
         return new_product
 

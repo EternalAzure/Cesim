@@ -8,12 +8,23 @@ class Phone:
 
     performance:int
     battery:int
+    advertizing:float
+    channel_investments:float
+
     camera:bool
     memory:bool
     display:bool
     resistance:bool
     security:bool
+    
     design:Literal["Classic", "Avant garde", "Sport"]
+
+    households_sales:float = 0
+    he_households_sales:float = 0
+    companies_sales:float = 0
+    he_companies_sales:float = 0
+    total_sales:float = 0
+    brand:str = "Pink"
 
 @dataclass
 class Product:
@@ -25,9 +36,9 @@ class Product:
 
     # Sales
     households_sales:float
-    high_end_households_sales:float
+    he_households_sales:float
     companies_sales:float
-    high_end_companies_sales:float
+    he_companies_sales:float
     total_sales:float
 
     # Sales by distribution channel
@@ -37,9 +48,9 @@ class Product:
     
     # Market share %
     households_market_share: float
-    high_end_households_market_share: float
+    he_households_market_share: float
     companies_market_share: float
-    high_end_companies_market_share: float
+    he_companies_market_share: float
     
     # Marketing
     advertizing:float
@@ -57,32 +68,38 @@ class Product:
 
     # Awareness & Intention
     households_awareness:float
-    high_end_households_awareness:float
+    he_households_awareness:float
     companies_awareness:float
-    high_end_companies_awareness:float
+    he_companies_awareness:float
 
     households_intention:float
-    high_end_households_intention:float
+    he_households_intention:float
     companies_intention:float
-    high_end_companies_intention:float
+    he_companies_intention:float
 
 
     def __post_init__(self):
         self.households_sales = round(self.households_sales, 2)
-        self.high_end_households_sales = round(self.high_end_households_sales, 2)
+        self.he_households_sales = round(self.he_households_sales, 2)
         self.companies_sales = round(self.companies_sales, 2)
-        self.high_end_companies_sales = round(self.high_end_companies_sales, 2)
+        self.he_companies_sales = round(self.he_companies_sales, 2)
         self.total_sales = round(self.total_sales, 2)
         
         self.margin = self.price - self.variable_unit_cost
         self.margin_percent = self.margin / self.variable_unit_cost
         self.performance_per_euro = self.performance / self.price
         self.battery_per_euro = self.battery / self.price
-        self.total_awareness = self.households_awareness + self.high_end_households_awareness + self.companies_awareness + self.high_end_companies_awareness
-        self.total_intentions = self.households_intention + self.high_end_households_intention + self.companies_intention + self.high_end_companies_intention
+        self.total_awareness = self.households_awareness + self.he_households_awareness + self.companies_awareness + self.he_companies_awareness
+        self.total_intentions = self.households_intention + self.he_households_intention + self.companies_intention + self.he_companies_intention
         self.profit = self.total_sales * self.margin
 
-        self.audience = f"H{round(self.households_market_share)} HH{round(self.high_end_households_market_share)} C{round(self.companies_market_share)} HC{round(self.high_end_companies_market_share)}"
+        self.audience = f"H{round(self.households_market_share)} HH{round(self.he_households_market_share)} C{round(self.companies_market_share)} HC{round(self.he_companies_market_share)}"
 
 
 
+    def __eq__(self, value: object) -> bool:
+        if not isinstance(value, self.__class__): return False
+        return self.name == value.name and self.brand == value.brand
+
+    def __ne__(self, value: object) -> bool:
+        return not self.__eq__(value)

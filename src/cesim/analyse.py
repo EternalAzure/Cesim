@@ -26,22 +26,22 @@ class Analyse:
         focus_groups = ("Households", "High-End Households", "Companies", "High-End Companies")
         style_sales = {
             'Classic': (
-                self.market.classic().households().total, 
-                self.market.classic().high_end_households().total, 
-                self.market.classic().companies().total, 
-                self.market.classic().high_end_companies().total
+                round(self.market.classic().households().total / self.market.households().total * 100, 2),
+                round(self.market.classic().he_households().total / self.market.he_households().total * 100, 2),
+                round(self.market.classic().companies().total / self.market.companies().total * 100, 2),
+                round(self.market.classic().he_companies().total / self.market.he_companies().total * 100, 2)
             ),
             'Avant Garde': (
-                self.market.avant_garde().households().total, 
-                self.market.avant_garde().high_end_households().total, 
-                self.market.avant_garde().companies().total, 
-                self.market.avant_garde().high_end_companies().total
+                round(self.market.avant_garde().households().total / self.market.households().total * 100, 2),
+                round(self.market.avant_garde().he_households().total / self.market.he_households().total * 100, 2),
+                round(self.market.avant_garde().companies().total / self.market.companies().total * 100, 2),
+                round(self.market.avant_garde().he_companies().total / self.market.he_companies().total * 100, 2),
             ),
             'Sport': (
-                self.market.sport().households().total, 
-                self.market.sport().high_end_households().total, 
-                self.market.sport().companies().total, 
-                self.market.sport().high_end_companies().total
+                round(self.market.sport().households().total / self.market.households().total * 100, 2),
+                round(self.market.sport().he_households().total / self.market.he_households().total * 100, 2),
+                round(self.market.sport().companies().total / self.market.companies().total * 100, 2),
+                round(self.market.sport().he_companies().total / self.market.he_companies().total * 100, 2),
             ),
         }
 
@@ -52,10 +52,10 @@ class Analyse:
         for container in res.bar_containers: # pyright: ignore
             ax.bar_label(container, padding=3)
 
-        ax.set_ylabel('sales k')
+        ax.set_ylabel('sales %')
         ax.set_title('Sales')
         ax.legend(loc='upper left', ncols=3)
-        ax.set_ylim(0, self.market.y_lim().group)
+        ax.set_ylim(0, 100)
 
         plt.show()
 
@@ -67,33 +67,33 @@ class Analyse:
         feature_sales = {
             'Camera': (
                 round(self.market.households().camera().total / self.market.households().total * 100, 2), 
-                round(self.market.high_end_households().camera().total / self.market.high_end_households().total * 100, 2), 
+                round(self.market.he_households().camera().total / self.market.he_households().total * 100, 2), 
                 round(self.market.companies().camera().total / self.market.companies().total * 100, 2), 
-                round(self.market.high_end_companies().camera().total / self.market.high_end_companies().total * 100, 2)
+                round(self.market.he_companies().camera().total / self.market.he_companies().total * 100, 2)
             ),
             'Memory': (
                 round(self.market.households().memory().total / self.market.households().total * 100, 2),
-                round(self.market.high_end_households().memory().total / self.market.high_end_households().total * 100, 2),
+                round(self.market.he_households().memory().total / self.market.he_households().total * 100, 2),
                 round(self.market.companies().memory().total / self.market.companies().total * 100, 2),
-                round(self.market.high_end_companies().memory().total / self.market.high_end_companies().total * 100, 2),
+                round(self.market.he_companies().memory().total / self.market.he_companies().total * 100, 2),
             ),
             'Display': (
                 round(self.market.households().display().total / self.market.households().total * 100, 2), 
-                round(self.market.high_end_households().display().total / self.market.high_end_households().total * 100, 2), 
+                round(self.market.he_households().display().total / self.market.he_households().total * 100, 2), 
                 round(self.market.companies().display().total / self.market.companies().total * 100, 2), 
-                round(self.market.high_end_companies().display().total / self.market.high_end_companies().total * 100, 2)
+                round(self.market.he_companies().display().total / self.market.he_companies().total * 100, 2)
             ),
             'Resistance': (
                 round(self.market.households().resistance().total / self.market.households().total * 100, 2),
-                round(self.market.high_end_households().resistance().total / self.market.high_end_households().total * 100, 2),
+                round(self.market.he_households().resistance().total / self.market.he_households().total * 100, 2),
                 round(self.market.companies().resistance().total / self.market.companies().total * 100, 2),
-                round(self.market.high_end_companies().resistance().total / self.market.high_end_companies().total * 100, 2)
+                round(self.market.he_companies().resistance().total / self.market.he_companies().total * 100, 2)
             ),
             'Security': (
                 round(self.market.households().security().total / self.market.households().total * 100, 2), 
-                round(self.market.high_end_households().security().total / self.market.high_end_households().total * 100, 2), 
+                round(self.market.he_households().security().total / self.market.he_households().total * 100, 2), 
                 round(self.market.companies().security().total / self.market.companies().total * 100, 2), 
-                round(self.market.high_end_companies().security().total / self.market.high_end_companies().total * 100, 2)
+                round(self.market.he_companies().security().total / self.market.he_companies().total * 100, 2)
             ),
         }
 
@@ -125,14 +125,14 @@ class Analyse:
             phones = self.market.households()
             y_limit = self.market.households().sport().y_lim().feature
         elif group == "HH":
-            phones = self.market.high_end_households()
-            y_limit = self.market.high_end_households().sport().y_lim().feature
+            phones = self.market.he_households()
+            y_limit = self.market.he_households().sport().y_lim().feature
         elif group == "C":
             phones = self.market.companies()
             y_limit = self.market.companies().sport().y_lim().feature
         elif group == "HC":
-            phones = self.market.high_end_companies()
-            y_limit = self.market.high_end_companies().sport().y_lim().feature
+            phones = self.market.he_companies()
+            y_limit = self.market.he_companies().sport().y_lim().feature
         else: raise ValueError()
 
         design_groups = ("Classic", "Avant garde", "Sport")
@@ -193,14 +193,14 @@ class Analyse:
             y_trendline = [p.households_sales for p in self.market.products]
             y_dispersion = [p.households_sales for p in all_by_perf]
         elif group == "HH":
-            y_limit = self.market.high_end_households().y_lim().total
+            y_limit = self.market.he_households().y_lim().total
 
-            y_classics = [p.high_end_households_sales for p in classics]
-            y_avants = [p.high_end_households_sales for p in avants]
-            y_sports = [p.high_end_households_sales for p in sports]
+            y_classics = [p.he_households_sales for p in classics]
+            y_avants = [p.he_households_sales for p in avants]
+            y_sports = [p.he_households_sales for p in sports]
 
-            y_trendline = [p.high_end_households_sales for p in self.market.products]
-            y_dispersion = [p.high_end_households_sales for p in all_by_perf]
+            y_trendline = [p.he_households_sales for p in self.market.products]
+            y_dispersion = [p.he_households_sales for p in all_by_perf]
         elif group == "C":
             y_limit = self.market.companies().y_lim().total
 
@@ -211,14 +211,14 @@ class Analyse:
             y_trendline = [p.companies_sales for p in self.market.products]
             y_dispersion = [p.companies_sales for p in all_by_perf]
         elif group == "HC":
-            y_limit = self.market.high_end_companies().y_lim().total
+            y_limit = self.market.he_companies().y_lim().total
 
-            y_classics = [p.high_end_companies_sales for p in classics]
-            y_avants = [p.high_end_companies_sales for p in avants]
-            y_sports = [p.high_end_companies_sales for p in sports]
+            y_classics = [p.he_companies_sales for p in classics]
+            y_avants = [p.he_companies_sales for p in avants]
+            y_sports = [p.he_companies_sales for p in sports]
 
-            y_trendline = [p.high_end_companies_sales for p in self.market.products]
-            y_dispersion = [p.high_end_companies_sales for p in all_by_perf]
+            y_trendline = [p.he_companies_sales for p in self.market.products]
+            y_dispersion = [p.he_companies_sales for p in all_by_perf]
         else: raise ValueError()
         scale = 200
 
@@ -293,11 +293,11 @@ class Analyse:
             y_trendline = [p.households_sales for p in self.market.products]
             y_dispersion = [p.households_sales for p in all_by_perf]
         elif group == "HH":
-            y_limit = self.market.high_end_households().y_lim().total
+            y_limit = self.market.he_households().y_lim().total
 
-            y_classics = [p.high_end_households_sales for p in classics]
-            y_avants = [p.high_end_households_sales for p in avants]
-            y_sports = [p.high_end_households_sales for p in sports]
+            y_classics = [p.he_households_sales for p in classics]
+            y_avants = [p.he_households_sales for p in avants]
+            y_sports = [p.he_households_sales for p in sports]
             
             y_trendline = [p.households_sales for p in self.market.products]
             y_dispersion = [p.households_sales for p in all_by_perf]
@@ -311,11 +311,11 @@ class Analyse:
             y_trendline = [p.households_sales for p in self.market.products]
             y_dispersion = [p.households_sales for p in all_by_perf]
         elif group == "HC":
-            y_limit = self.market.high_end_companies().y_lim().total
+            y_limit = self.market.he_companies().y_lim().total
 
-            y_classics = [p.high_end_companies_sales for p in classics]
-            y_avants = [p.high_end_companies_sales for p in avants]
-            y_sports = [p.high_end_companies_sales for p in sports]
+            y_classics = [p.he_companies_sales for p in classics]
+            y_avants = [p.he_companies_sales for p in avants]
+            y_sports = [p.he_companies_sales for p in sports]
             
             y_trendline = [p.households_sales for p in self.market.products]
             y_dispersion = [p.households_sales for p in all_by_perf]
@@ -434,13 +434,13 @@ class Analyse:
             y_trendline = [p.households_sales for p in self.market.products]
             y_dispersion = [p.households_sales for p in all_by_ppe]
         elif group == "HH":
-            y_limit = self.market.high_end_households().y_lim().total
+            y_limit = self.market.he_households().y_lim().total
 
-            y_classics = [p.high_end_households_sales for p in classics]
-            y_avants = [p.high_end_households_sales for p in avants]
-            y_sports = [p.high_end_households_sales for p in sports]
+            y_classics = [p.he_households_sales for p in classics]
+            y_avants = [p.he_households_sales for p in avants]
+            y_sports = [p.he_households_sales for p in sports]
           
-            y_trendline = [p.high_end_households_sales for p in self.market.products]
+            y_trendline = [p.he_households_sales for p in self.market.products]
             y_dispersion = [p.households_sales for p in all_by_ppe]
         elif group == "C":
             y_limit = self.market.companies().y_lim().total
@@ -452,13 +452,13 @@ class Analyse:
             y_trendline = [p.companies_sales for p in self.market.products]
             y_dispersion = [p.households_sales for p in all_by_ppe]
         elif group == "HC":
-            y_limit = self.market.high_end_companies().y_lim().total
+            y_limit = self.market.he_companies().y_lim().total
 
-            y_classics = [p.high_end_companies_sales for p in classics]
-            y_avants = [p.high_end_companies_sales for p in avants]
-            y_sports = [p.high_end_companies_sales for p in sports]
+            y_classics = [p.he_companies_sales for p in classics]
+            y_avants = [p.he_companies_sales for p in avants]
+            y_sports = [p.he_companies_sales for p in sports]
 
-            y_trendline = [p.high_end_companies_sales for p in self.market.products]
+            y_trendline = [p.he_companies_sales for p in self.market.products]
             y_dispersion = [p.households_sales for p in all_by_ppe]
         else: raise ValueError()
         scale = 200
@@ -561,13 +561,13 @@ class Analyse:
             y_trendline = [p.households_sales for p in self.market.products]
             y_dispersion = [p.households_sales for p in all_by_bpe]
         elif group == "HH":
-            y_limit = self.market.high_end_households().y_lim().total
+            y_limit = self.market.he_households().y_lim().total
 
-            y_classics = [p.high_end_households_sales for p in classics]
-            y_avants = [p.high_end_households_sales for p in avants]
-            y_sports = [p.high_end_households_sales for p in sports]
+            y_classics = [p.he_households_sales for p in classics]
+            y_avants = [p.he_households_sales for p in avants]
+            y_sports = [p.he_households_sales for p in sports]
 
-            y_trendline = [p.high_end_households_sales for p in self.market.products]
+            y_trendline = [p.he_households_sales for p in self.market.products]
             y_dispersion = [p.households_sales for p in all_by_bpe]
         elif group == "C":
             y_limit = self.market.companies().y_lim().total
@@ -579,13 +579,13 @@ class Analyse:
             y_trendline = [p.companies_sales for p in self.market.products]
             y_dispersion = [p.households_sales for p in all_by_bpe]
         elif group == "HC":
-            y_limit = self.market.high_end_companies().y_lim().total
+            y_limit = self.market.he_companies().y_lim().total
 
-            y_classics = [p.high_end_companies_sales for p in classics]
-            y_avants = [p.high_end_companies_sales for p in avants]
-            y_sports = [p.high_end_companies_sales for p in sports]
+            y_classics = [p.he_companies_sales for p in classics]
+            y_avants = [p.he_companies_sales for p in avants]
+            y_sports = [p.he_companies_sales for p in sports]
 
-            y_trendline = [p.high_end_companies_sales for p in self.market.products]
+            y_trendline = [p.he_companies_sales for p in self.market.products]
             y_dispersion = [p.households_sales for p in all_by_bpe]
         else: raise ValueError()
         scale = 200
@@ -672,11 +672,11 @@ class Analyse:
         if group == "H":
             y = [p.households_sales for p in classics]
         elif group == "HH":
-            y = [p.high_end_households_sales for p in classics]
+            y = [p.he_households_sales for p in classics]
         elif group == "C":
             y = [p.companies_sales for p in classics]
         elif group == "HC":
-            y = [p.high_end_companies_sales for p in classics]
+            y = [p.he_companies_sales for p in classics]
         else: raise ValueError()
         scale = 200
         ax.scatter(x, y, c=f"tab:blue", s=scale, label="Classic",
@@ -686,11 +686,11 @@ class Analyse:
         if group == "H":
             y = [p.households_sales for p in avants]
         elif group == "HH":
-            y = [p.high_end_households_sales for p in avants]
+            y = [p.he_households_sales for p in avants]
         elif group == "C":
             y = [p.companies_sales for p in avants]
         elif group == "HC":
-            y = [p.high_end_companies_sales for p in avants]
+            y = [p.he_companies_sales for p in avants]
         else: raise ValueError()
         scale = 200
         ax.scatter(x, y, c=f"tab:orange", s=scale, label="Avant garde",
@@ -700,11 +700,11 @@ class Analyse:
         if group == "H":
             y = [p.households_sales for p in sports]
         elif group == "HH":
-            y = [p.high_end_households_sales for p in sports]
+            y = [p.he_households_sales for p in sports]
         elif group == "C":
             y = [p.companies_sales for p in sports]
         elif group == "HC":
-            y = [p.high_end_companies_sales for p in sports]
+            y = [p.he_companies_sales for p in sports]
         else: raise ValueError()
         scale = 200
         ax.scatter(x, y, c=f"tab:green", s=scale, label="Sport",
@@ -762,15 +762,15 @@ class Analyse:
             y_cum_sales = list(itertools.accumulate([p.total_sales / self.market.households().total for p in self.market.households().products]))
             y_cum_sales = [1 - p for p in y_cum_sales]
         elif group == "HH":
-            low_perf = [p for p in self.market.high_end_households().products if p.performance <= self.market.stats.low_performance()]
-            high_perf = [p for p in self.market.high_end_households().products if p.performance >= self.market.stats.high_performance()]
-            mid_perf = [p for p in self.market.high_end_households().products if p not in low_perf and p not in high_perf]
+            low_perf = [p for p in self.market.he_households().products if p.performance <= self.market.stats.low_performance()]
+            high_perf = [p for p in self.market.he_households().products if p.performance >= self.market.stats.high_performance()]
+            mid_perf = [p for p in self.market.he_households().products if p not in low_perf and p not in high_perf]
 
-            average = self.market.high_end_households().stats.average_price()
+            average = self.market.he_households().stats.average_price()
             x_average = [average, average]
-            y_average = [0, self.market.high_end_households().y_lim().total]
-            x_trend = [p.price for p in self.market.high_end_households().products]
-            y_cum_sales = list(itertools.accumulate([p.total_sales / self.market.high_end_households().total for p in self.market.high_end_households().products]))
+            y_average = [0, self.market.he_households().y_lim().total]
+            x_trend = [p.price for p in self.market.he_households().products]
+            y_cum_sales = list(itertools.accumulate([p.total_sales / self.market.he_households().total for p in self.market.he_households().products]))
             y_cum_sales = [1 - p for p in y_cum_sales]
         elif group == "C":
             low_perf = [p for p in self.market.companies().products if p.performance <= self.market.stats.low_performance()]
@@ -784,15 +784,15 @@ class Analyse:
             y_cum_sales = list(itertools.accumulate([p.total_sales / self.market.companies().total for p in self.market.companies().products]))
             y_cum_sales = [1 - p for p in y_cum_sales]
         elif group == "HC":
-            low_perf = [p for p in self.market.high_end_companies().products if p.performance <= self.market.stats.low_performance()]
-            high_perf = [p for p in self.market.high_end_companies().products if p.performance >= self.market.stats.high_performance()]
-            mid_perf = [p for p in self.market.high_end_companies().products if p not in low_perf and p not in high_perf]
+            low_perf = [p for p in self.market.he_companies().products if p.performance <= self.market.stats.low_performance()]
+            high_perf = [p for p in self.market.he_companies().products if p.performance >= self.market.stats.high_performance()]
+            mid_perf = [p for p in self.market.he_companies().products if p not in low_perf and p not in high_perf]
             
-            average = self.market.high_end_companies().stats.average_price()
+            average = self.market.he_companies().stats.average_price()
             x_average = [average, average]
-            y_average = [0, self.market.high_end_companies().y_lim().total]
-            x_trend = [p.price for p in self.market.high_end_companies().products]
-            y_cum_sales = list(itertools.accumulate([p.total_sales / self.market.high_end_companies().total for p in self.market.high_end_companies().products]))
+            y_average = [0, self.market.he_companies().y_lim().total]
+            x_trend = [p.price for p in self.market.he_companies().products]
+            y_cum_sales = list(itertools.accumulate([p.total_sales / self.market.he_companies().total for p in self.market.he_companies().products]))
             y_cum_sales = [1 - p for p in y_cum_sales]
         else: raise ValueError()
 
@@ -828,9 +828,9 @@ class Analyse:
 
         y_limit = max([
             self.market.bestseller("H").households_sales,
-            self.market.bestseller("HH").high_end_households_sales,
+            self.market.bestseller("HH").he_households_sales,
             self.market.bestseller("C").companies_sales,
-            self.market.bestseller("HC").high_end_households_sales,
+            self.market.bestseller("HC").he_households_sales,
         ])
         ax.legend()
         ax.set_title(f"{group} Average")
@@ -843,8 +843,8 @@ class Analyse:
     def advertizing(self):
         #self.ad_effect_teams()
         #self.all_advertizing()
+        self.money_to_awareness_history_by_teams_and_groups()
         self.awareness_to_intentions_history_by_teams_and_groups()
-        #self.money_to_awareness_history_by_teams_and_groups()
         #self.team_ad_effect_history()
         #self.advertizing_x_sales()
         #self.all_awareness()
@@ -912,9 +912,9 @@ class Analyse:
 
         trendline = [p.total_awareness for p in source]
         awareness_h = [p.households_awareness for p in source]
-        awareness_hh = [p.high_end_households_awareness for p in source]
+        awareness_hh = [p.he_households_awareness for p in source]
         awareness_c = [p.companies_awareness for p in source]
-        awareness_hc = [p.high_end_companies_awareness for p in source]
+        awareness_hc = [p.he_companies_awareness for p in source]
 
         awareness_counts = {
             "H": awareness_h,
@@ -958,6 +958,7 @@ class Analyse:
         ax.set_xlabel("advertizing €")
         ax.set_ylabel("awareness k")
         ax.legend(loc="upper right")
+        plt.show()
 
     def awareness_x_sales(self):
         source = self.market.products.copy()
@@ -966,9 +967,9 @@ class Analyse:
 
         trendline = [p.total_sales for p in source]
         sales_h = [p.households_sales for p in source]
-        sales_hh = [p.high_end_households_sales for p in source]
+        sales_hh = [p.he_households_sales for p in source]
         sales_c = [p.companies_sales for p in source]
-        sales_hc = [p.high_end_companies_sales for p in source]
+        sales_hc = [p.he_companies_sales for p in source]
 
         sales_counts = {
             "H": sales_h,
@@ -1004,9 +1005,9 @@ class Analyse:
 
         trendline = [p.total_sales for p in source]
         sales_h = [p.households_sales for p in source]
-        sales_hh = [p.high_end_households_sales for p in source]
+        sales_hh = [p.he_households_sales for p in source]
         sales_c = [p.companies_sales for p in source]
-        sales_hc = [p.high_end_companies_sales for p in source]
+        sales_hc = [p.he_companies_sales for p in source]
 
         sales_counts = {
             "H": sales_h,
@@ -1076,7 +1077,7 @@ class Analyse:
         # 1
         x = [p for p in source if p.battery >= self.market.stats.average_battery()]
         x = [p for p in x if p.security]
-        y = [p.high_end_companies_sales for p in x]
+        y = [p.he_companies_sales for p in x]
         x = [p.advertizing for p in x]
         ax[0,0].scatter(x, y)
 
@@ -1092,7 +1093,7 @@ class Analyse:
         # 2
         x = [p for p in source if p.battery <= self.market.stats.average_battery()]
         x = [p for p in x if not p.security]
-        y = [p.high_end_companies_sales for p in x]
+        y = [p.he_companies_sales for p in x]
         x = [p.advertizing for p in x]
         ax[1,0].scatter(x, y)
 
@@ -1108,7 +1109,7 @@ class Analyse:
         # 3
         x = [p for p in source if p.battery_per_euro >= self.market.stats.average_bpe()]
         x = [p for p in x if p.security]
-        y = [p.high_end_companies_sales for p in x]
+        y = [p.he_companies_sales for p in x]
         x = [p.advertizing for p in x]
         ax[0,1].scatter(x, y)
 
@@ -1124,7 +1125,7 @@ class Analyse:
         # 4
         x = [p for p in source if p.battery_per_euro <= self.market.stats.average_bpe()]
         x = [p for p in x if not p.security]
-        y = [p.high_end_companies_sales for p in x]
+        y = [p.he_companies_sales for p in x]
         x = [p.advertizing for p in x]
         ax[1,1].scatter(x, y)
 
@@ -1149,7 +1150,7 @@ class Analyse:
         # 1
         x = [p for p in source if p.performance >= self.market.stats.average_performance()]
         x = [p for p in x if p.camera]
-        y = [p.high_end_households_sales for p in x]
+        y = [p.he_households_sales for p in x]
         x = [p.advertizing for p in x]
         ax[0,0].scatter(x, y)
 
@@ -1165,7 +1166,7 @@ class Analyse:
         # 2
         x = [p for p in source if p.performance <= self.market.stats.average_performance()]
         x = [p for p in x if not p.camera or not p.memory]
-        y = [p.high_end_households_sales for p in x]
+        y = [p.he_households_sales for p in x]
         x = [p.advertizing for p in x]
         ax[1,0].scatter(x, y)
 
@@ -1181,7 +1182,7 @@ class Analyse:
         # 3
         x = [p for p in source if p.performance_per_euro >= self.market.stats.average_ppe()]
         x = [p for p in x if p.camera]
-        y = [p.high_end_households_sales for p in x]
+        y = [p.he_households_sales for p in x]
         x = [p.advertizing for p in x]
         ax[0,1].scatter(x, y)
 
@@ -1197,7 +1198,7 @@ class Analyse:
         # 4
         x = [p for p in source if p.performance_per_euro <= self.market.stats.average_ppe()]
         x = [p for p in x if not p.camera or not p.memory]
-        y = [p.high_end_households_sales for p in x]
+        y = [p.he_households_sales for p in x]
         x = [p.advertizing for p in x]
         ax[1,1].scatter(x, y)
 
@@ -1491,7 +1492,6 @@ class Analyse:
 
         plt.show()
 
-
     def _money_to_awareness(self, products:list[Product]):
         x = [p.advertizing for p in products]
         y = [p.total_awareness for p in products]
@@ -1575,7 +1575,7 @@ class Analyse:
         # 1
         x = [p for p in source if p.battery >= self.market.stats.average_battery()]
         x = [p for p in x if p.security]
-        y = [p.high_end_companies_sales for p in x]
+        y = [p.he_companies_sales for p in x]
         x = [p.channel_investments for p in x]
         ax[0,0].scatter(x, y)
 
@@ -1591,7 +1591,7 @@ class Analyse:
         # 2
         x = [p for p in source if p.battery <= self.market.stats.average_battery()]
         x = [p for p in x if not p.security]
-        y = [p.high_end_companies_sales for p in x]
+        y = [p.he_companies_sales for p in x]
         x = [p.channel_investments for p in x]
         ax[1,0].scatter(x, y)
 
@@ -1607,7 +1607,7 @@ class Analyse:
         # 3
         x = [p for p in source if p.battery_per_euro >= self.market.stats.average_bpe()]
         x = [p for p in x if p.security]
-        y = [p.high_end_companies_sales for p in x]
+        y = [p.he_companies_sales for p in x]
         x = [p.channel_investments for p in x]
         ax[0,1].scatter(x, y)
 
@@ -1623,7 +1623,7 @@ class Analyse:
         # 4
         x = [p for p in source if p.battery_per_euro <= self.market.stats.average_bpe()]
         x = [p for p in x if not p.security]
-        y = [p.high_end_companies_sales for p in x]
+        y = [p.he_companies_sales for p in x]
         x = [p.channel_investments for p in x]
         ax[1,1].scatter(x, y)
 
@@ -1649,7 +1649,7 @@ class Analyse:
         # 1
         x = [p for p in source if p.performance >= self.market.stats.average_performance()]
         x = [p for p in x if p.camera]
-        y = [p.high_end_households_sales for p in x]
+        y = [p.he_households_sales for p in x]
         x = [p.channel_investments for p in x]
         ax[0,0].scatter(x, y)
 
@@ -1665,7 +1665,7 @@ class Analyse:
         # 2
         x = [p for p in source if p.performance <= self.market.stats.average_performance()]
         x = [p for p in x if not p.camera or not p.memory]
-        y = [p.high_end_households_sales for p in x]
+        y = [p.he_households_sales for p in x]
         x = [p.channel_investments for p in x]
         ax[1,0].scatter(x, y)
 
@@ -1681,7 +1681,7 @@ class Analyse:
         # 3
         x = [p for p in source if p.performance_per_euro >= self.market.stats.average_ppe()]
         x = [p for p in x if p.camera]
-        y = [p.high_end_households_sales for p in x]
+        y = [p.he_households_sales for p in x]
         x = [p.channel_investments for p in x]
         ax[0,1].scatter(x, y)
 
@@ -1697,7 +1697,7 @@ class Analyse:
         # 4
         x = [p for p in source if p.performance_per_euro <= self.market.stats.average_ppe()]
         x = [p for p in x if not p.camera or not p.memory]
-        y = [p.high_end_households_sales for p in x]
+        y = [p.he_households_sales for p in x]
         x = [p.channel_investments for p in x]
         ax[1,1].scatter(x, y)
 
@@ -1879,9 +1879,9 @@ class Analyse:
         # DEMAND #
         x_price = [p.price for p in source.products]
         y_h_sales = [p.households_sales for p in source.products]
-        y_hh_sales = [p.high_end_households_sales for p in source.products]
+        y_hh_sales = [p.he_households_sales for p in source.products]
         y_c_sales = [p.companies_sales for p in source.products]
-        y_hc_sales = [p.high_end_companies_sales for p in source.products]
+        y_hc_sales = [p.he_companies_sales for p in source.products]
         y_total_sales = [p.total_sales for p in source.products]
 
         # PLOT COMPETITION #
@@ -1904,7 +1904,7 @@ class Analyse:
 
         plt.show()
 
-    def competion_stack(self, 
+    def competion_stack_by_team(self, 
                   camera:bool=False, memory:bool=False, display:bool=False, resistance:bool=False, security:bool=False, 
                   classic:bool=False, avant_garde:bool=False, sport:bool=False, new_products:list=[]):
         
@@ -1928,43 +1928,38 @@ class Analyse:
             source = source.classic()
 
         # COMPETITION #
-        if new_products:
-            x_classics = [p.price for p in source.classic().products if p.brand != "Pink"]
-            x_avants = [p.price for p in source.avant_garde().products if p.brand != "Pink"]
-            x_sports = [p.price for p in source.sport().products  if p.brand != "Pink"]
-            y_classics = [p.performance + p.battery for p in source.classic().products if p.brand != "Pink"]
-            y_avants = [p.performance + p.battery for p in source.avant_garde().products if p.brand != "Pink"]
-            y_sports = [p.performance + p.battery for p in source.sport().products if p.brand != "Pink"]
-        else:
-            x_classics = [p.price for p in source.classic().products]
-            x_avants = [p.price for p in source.avant_garde().products]
-            x_sports = [p.price for p in source.sport().products ]
-            y_classics = [p.performance + p.battery for p in source.classic().products]
-            y_avants = [p.performance + p.battery for p in source.avant_garde().products]
-            y_sports = [p.performance + p.battery for p in source.sport().products]
 
-        # HYPOTETICAL
-        x_hypotetical = [n[0] for n in new_products]
-        y_hypotetical = [n[1] for n in new_products]
+        x_red = [p.price for p in source.brand().red.products]
+        x_blue = [p.price for p in source.brand().blue.products]
+        x_orange = [p.price for p in source.brand().orange.products]
+        x_grey = [p.price for p in source.brand().grey.products]
+        x_pink = [p.price for p in source.brand().pink.products]
+        x_green = [p.price for p in source.brand().green.products]
+
+        y_red = [p.performance + p.battery for p in source.brand().red.products]
+        y_blue = [p.performance + p.battery for p in source.brand().blue.products]
+        y_orange = [p.performance + p.battery for p in source.brand().orange.products]
+        y_grey = [p.performance + p.battery for p in source.brand().grey.products]
+        y_pink = [p.performance + p.battery for p in source.brand().pink.products]
+        y_green = [p.performance + p.battery for p in source.brand().green.products]
 
         # DEMAND #
         x_price = [p.price for p in source.products]
         y_h_sales = [p.households_sales for p in source.products]
-        y_hh_sales = [p.high_end_households_sales for p in source.products]
+        y_hh_sales = [p.he_households_sales for p in source.products]
         y_c_sales = [p.companies_sales for p in source.products]
-        y_hc_sales = [p.high_end_companies_sales for p in source.products]
-        y_total_sales = [p.total_sales for p in source.products]
+        y_hc_sales = [p.he_companies_sales for p in source.products]
 
         # PLOT COMPETITION #
         fig, ax = plt.subplots()
-        ax.scatter(x_classics, y_classics, c="tab:blue")
-        ax.scatter(x_avants, y_avants, c="tab:orange")
-        ax.scatter(x_sports, y_sports, c="tab:green")
+        ax.scatter(x_red, y_red, c="tab:red")
+        ax.scatter(x_blue, y_blue, c="tab:blue")
+        ax.scatter(x_orange, y_orange, c="tab:orange")
+        ax.scatter(x_grey, y_grey, c="tab:grey")
+        ax.scatter(x_pink, y_pink, c="tab:pink")
+        ax.scatter(x_green, y_green, c="tab:green")
         ax.set_xlabel("price €")
         ax.set_ylabel("specs")
-
-        # PLOT HYPOTETICAL
-        ax.scatter(x_hypotetical, y_hypotetical, c="tab:pink")
 
         # PLOT DEMAND #
         ax2 = ax.twinx()
@@ -1977,6 +1972,200 @@ class Analyse:
         plt.show()
 
     # -- DEMAND -- #
+
+    def get_price_deviance_demand(self, 
+                  camera:bool=False, memory:bool=False, display:bool=False, resistance:bool=False, security:bool=False, 
+                  classic:bool=False, avant_garde:bool=False, sport:bool=False):
+        
+        source = self.market
+        if camera:
+            source = source.camera()
+        if memory:
+            source = source.memory()
+        if display:
+            source = source.display()
+        if resistance:
+            source = source.resistance()
+        if security:
+            source = source.security()
+
+        if sport:
+            source = source.sport()
+        if avant_garde:
+            source = source.avant_garde()
+        if classic:
+            source = source.classic()
+
+        # DEMAND #
+        divitions = 11
+        if len(source.products) < 11: divitions = len(source.products)
+        x_range = source.stats.max_price() - source.stats.min_price()
+        x_step = x_range / divitions
+        x_start = source.stats.min_price() + x_step / 2
+        x = [x_start]
+        for i in range(1, divitions):
+            x.insert(i, x[i-1] + x_step)
+
+        x_h = [price / source.households().stats.average_price() - 1 for price in x]
+        x_h_range = max(x_h) + abs(min(x_h))
+        x_h_step = x_h_range / divitions
+        x_hh = [price / source.he_households().stats.average_price() - 1 for price in x]
+        x_hh_range = max(x_hh) + abs(min(x_hh))
+        x_hh_step = x_hh_range / divitions
+        x_c = [price / source.companies().stats.average_price() - 1 for price in x]
+        x_c_range = max(x_c) + abs(min(x_c))
+        x_c_step = x_c_range / divitions
+        x_hc = [price / source.he_companies().stats.average_price() - 1 for price in x]
+        x_hc_range = max(x_hc) + abs(min(x_hc))
+        x_hc_step = x_hc_range / divitions
+
+        slot_index = 0
+        x_index = 0
+        y_households:list[float] = [0]*divitions
+        for product in source.products:
+            product_price_ratio = product.price / source.households().stats.average_price()
+            product_price_point = product_price_ratio - 1
+            for price_slot_middlepoint in x_h[x_index:]:
+                price_slot_upper_limit = price_slot_middlepoint + x_h_step / 2
+                if product_price_point <= price_slot_upper_limit:
+                    y_households[slot_index] += product.households_sales
+                    break
+                else:
+                    slot_index += 1
+                    x_index += 1
+        
+        slot_index = 0
+        x_index = 0        
+        y_he_households:list[float] = [0]*divitions
+        for product in source.products:
+            product_price_ratio = product.price / source.he_households().stats.average_price()
+            product_price_point = product_price_ratio - 1
+            for price_slot_middlepoint in x_hh[x_index:]:
+                price_slot_upper_limit = price_slot_middlepoint + x_hh_step / 2
+                if product_price_point <= price_slot_upper_limit:
+                    y_he_households[slot_index] += product.he_households_sales
+                    break
+                else:
+                    slot_index += 1
+                    x_index += 1
+
+        slot_index = 0
+        x_index = 0        
+        y_companies:list[float] = [0]*divitions
+        for product in source.products:
+            product_price_ratio = product.price / source.companies().stats.average_price()
+            product_price_point = product_price_ratio - 1
+            for price_slot_middlepoint in x_c[x_index:]:
+                price_slot_upper_limit = price_slot_middlepoint + x_c_step / 2
+                if product_price_point <= price_slot_upper_limit:
+                    y_companies[slot_index] += product.companies_sales
+                    break
+                else:
+                    slot_index += 1
+                    x_index += 1
+
+        slot_index = 0
+        x_index = 0
+        y_he_companies:list[float] = [0]*divitions
+        for product in source.products:
+            product_price_ratio = product.price / source.he_companies().stats.average_price()
+            product_price_point = product_price_ratio - 1
+            for price_slot_middlepoint in x_hc[x_index:]:
+                price_slot_upper_limit = price_slot_middlepoint + x_hc_step / 2
+                if product_price_point <= price_slot_upper_limit:
+                    y_he_companies[slot_index] += product.he_companies_sales
+                    break
+                else:
+                    slot_index += 1
+                    x_index += 1
+
+        # PERCENTAGES #
+        y_h = [sales / source.households().total * 100 for sales in y_households]
+        y_hh = [sales / source.he_households().total * 100 for sales in y_he_households]
+        y_c = [sales / source.companies().total * 100 for sales in y_companies]
+        y_hc = [sales / source.he_companies().total * 100 for sales in y_he_companies]
+
+        return {
+                    "households": x_h,
+                    "he_households": x_hh,
+                    "companies": x_c,
+                    "he_companies": x_hc,
+                }, {
+                    "households": y_h,
+                    "he_households": y_hh,
+                    "companies": y_c,
+                    "he_companies": y_hc,
+                }, {
+                    "households": x_h_step,
+                    "he_households": x_hh_step,
+                    "companies": x_c_step,
+                    "he_companies": x_hc_step,
+                }
+
+    def get_price_demand(self, 
+                  camera:bool=False, memory:bool=False, display:bool=False, resistance:bool=False, security:bool=False, 
+                  classic:bool=False, avant_garde:bool=False, sport:bool=False):
+        
+        source = self.market
+        if camera:
+            source = source.camera()
+        if memory:
+            source = source.memory()
+        if display:
+            source = source.display()
+        if resistance:
+            source = source.resistance()
+        if security:
+            source = source.security()
+
+        if sport:
+            source = source.sport()
+        if avant_garde:
+            source = source.avant_garde()
+        if classic:
+            source = source.classic()
+
+        # DEMAND #
+        divitions = 11
+        if len(source.products) < 11: divitions = len(source.products)
+        x_range = source.stats.max_price() - source.stats.min_price()
+        x_step = x_range / divitions
+        x_start = source.stats.min_price() + x_step / 2
+        x = [x_start]
+        for i in range(1, divitions):
+            x.insert(i, x[i-1] + x_step)
+
+        slot_index = 0
+        x_index = 0
+        y_households:list[float] = [0]*divitions
+        y_he_households:list[float] = [0]*divitions
+        y_companies:list[float] = [0]*divitions
+        y_he_companies:list[float] = [0]*divitions
+        for product in source.products:
+            for price_slot_middlepoint in x[x_index:]:
+                price_slot_upper_limit = price_slot_middlepoint + x_step / 2
+                if product.price <= price_slot_upper_limit:
+                    y_households[slot_index] += product.households_sales
+                    y_he_households[slot_index] += product.he_households_sales
+                    y_companies[slot_index] += product.companies_sales
+                    y_he_companies[slot_index] += product.he_companies_sales
+                    break
+                else:
+                    slot_index += 1
+                    x_index += 1
+
+        # PLOT DEMAND #
+        y_h = [sales / source.households().total * 100 for sales in y_households]
+        y_hh = [sales / source.he_households().total * 100 for sales in y_he_households]
+        y_c = [sales / source.companies().total * 100 for sales in y_companies]
+        y_hc = [sales / source.he_companies().total * 100 for sales in y_he_companies]
+
+        return x, {
+                    "households": y_h,
+                    "he_households": y_hh,
+                    "companies": y_c,
+                    "he_companies": y_hc,
+                }, x_step
 
     def price_demand(self, 
                   camera:bool=False, memory:bool=False, display:bool=False, resistance:bool=False, security:bool=False, 
@@ -2009,14 +2198,6 @@ class Analyse:
         y_avants = [p.performance + p.battery for p in source.avant_garde().products]
         y_sports = [p.performance + p.battery for p in source.sport().products]
 
-        # DEMAND #
-        x_price = [p.price for p in source.products]
-        y_h_sales = [p.households_sales for p in source.products]
-        y_hh_sales = [p.high_end_households_sales for p in source.products]
-        y_c_sales = [p.companies_sales for p in source.products]
-        y_hc_sales = [p.high_end_companies_sales for p in source.products]
-        y_total_sales = [p.total_sales for p in source.products]
-
         # PLOT COMPETITION #
         fig, ax = plt.subplots(2,2)
         ax[0,0].scatter(x_classics, y_classics, c="tab:blue")
@@ -2043,110 +2224,185 @@ class Analyse:
         ax[1,1].set_xlabel("price €")
         ax[1,1].set_ylabel("specs")
 
+
+        # DEMAND #
+        x, y_axises, width = self.get_price_demand(camera, memory, display, resistance, security, classic, avant_garde, sport)
+        y_households = y_axises["households"]
+        y_he_households = y_axises["he_households"]
+        y_companies = y_axises["companies"]
+        y_he_companies = y_axises["he_companies"]
+        
         # PLOT DEMAND #
-        divitions = 11
-        y_h_ = np.array_split(y_h_sales, divitions)
-        y_hh_ = np.array_split(y_hh_sales, divitions)
-        y_c_ = np.array_split(y_c_sales, divitions)
-        y_hc_ = np.array_split(y_hc_sales, divitions)
 
-        y_h = [sum(p) / source.households().total * 100 for p in y_h_]
-        y_hh = [sum(p) / source.high_end_households().total * 100 for p in y_hh_]
-        y_c = [sum(p) / source.companies().total * 100 for p in y_c_]
-        y_hc = [sum(p) / source.high_end_companies().total * 100 for p in y_hc_]
-
-        x_range = self.market.stats.max_price() - self.market.stats.min_price()
-        x_step = x_range / divitions
-        x_start = self.market.stats.min_price()
-        x = [x_start]
-        
-        for i in range(1, divitions):
-            x.insert(i, x[i-1] + x_step)
+        # HOUSEHOULDS
         axh = ax[0,0].twinx()
-        axh.bar(x, y_h, alpha=0.2, color=["purple"], width=x_step)
-        axh.set_ylabel("sales k")
+        axh.bar(x, y_households, alpha=0.2, color=["purple"], width=width)
+        axh.set_ylabel("sales %")
         axh.legend(loc="upper left")
-        print("")
-        print([round(_) for _ in x])
-        print("")
-        print([round(float(_)) for _ in y_hc])
-        print("")
-        
-        axhh = ax[0,1].twinx()
-        axhh.bar(x, y_hh, alpha=0.2, color=["orange"], width=x_step)
-        axhh.set_ylabel("sales k")
-        axhh.legend(loc="upper left")
-        
-        axc = ax[1,0].twinx()
-        axc.bar(x, y_c, alpha=0.2, color=["green"], width=x_step)
-        axc.set_ylabel("sales k")
-        axc.legend(loc="upper left")
-        
-        axhc = ax[1,1].twinx()
-        axhc.bar(x, y_hc, alpha=0.2, color=["blue"], width=x_step)
-        axhc.set_ylabel("sales k")
-        axhc.legend(loc="upper left")
+        axh.set_xlim(self.market.stats.min_price()-10, self.market.stats.max_price()+10)
+        axh.set_ylim(0)
 
+        # Trendline
+        z = np.polyfit(x, y_households, 3)
+        p = np.poly1d(z)
+        axh.plot(x, p(x))
+
+        # HE HOUSEHOULDS
+        axhh = ax[0,1].twinx()
+        axhh.bar(x, y_he_households, alpha=0.2, color=["orange"], width=width)
+        axhh.set_ylabel("sales %")
+        axhh.legend(loc="upper left")
+        axhh.set_xlim(self.market.stats.min_price()-10, self.market.stats.max_price()+10)
+
+        # Trendline
+        z = np.polyfit(x, y_he_households, 3)
+        p = np.poly1d(z)
+        axhh.plot(x, p(x))
+
+        # COMPANIES
+        axc = ax[1,0].twinx()
+        axc.bar(x, y_companies, alpha=0.2, color=["green"], width=width)
+        axc.set_ylabel("sales %")
+        axc.legend(loc="upper left")
+        axc.set_xlim(self.market.stats.min_price()-10, self.market.stats.max_price()+10)
+
+        # Trendline
+        z = np.polyfit(x, y_companies, 3)
+        p = np.poly1d(z)
+        axc.plot(x, p(x))
+
+        # HE COMPANIES
+        axhc = ax[1,1].twinx()
+        axhc.bar(x, y_he_companies, alpha=0.2, color=["blue"], width=width)
+        axhc.set_ylabel("sales %")
+        axhc.legend(loc="upper left")
+        axhc.set_xlim(self.market.stats.min_price()-10, self.market.stats.max_price()+10)
+
+        # Trendline
+        z = np.polyfit(x, y_he_companies, 3)
+        p = np.poly1d(z)
+        axhc.plot(x, p(x))
+
+        fig.tight_layout()
         plt.show()
 
-    def demand(self, market:Market):
+    def price_deviance_demand(self, 
+                  camera:bool=False, memory:bool=False, display:bool=False, resistance:bool=False, security:bool=False, 
+                  classic:bool=False, avant_garde:bool=False, sport:bool=False):
 
-        situation = pd.DataFrame(columns=[
-            "price",
-            "performance",
-            "battery",
-            
-            "h_sales",
-            "hh_sales",
-            "c_sales",
-            "hc_sales",
-            "total_sales",
+        source = self.market
+        if camera:
+            source = source.camera()
+        if memory:
+            source = source.memory()
+        if display:
+            source = source.display()
+        if resistance:
+            source = source.resistance()
+        if security:
+            source = source.security()
 
-            "ads",
-            "h_awareness",
-            "hh_awareness",
-            "c_awareness",
-            "hc_awareness",
-            "total_awareness",
-            "base_awareness",
-            
-            "channel_investments",
-            "specialist",
-            "generalist",
-            "online",
+        if sport:
+            source = source.sport()
+        if avant_garde:
+            source = source.avant_garde()
+        if classic:
+            source = source.classic()
 
-        ])
-        for i, product in enumerate(market.products, 1):
-            situation.loc[i] = [
-                # specs
-                product.price,
-                product.performance,
-                product.battery,
+        # DEMAND #
+        x_axes, y_axes, widths = self.get_price_deviance_demand(camera, memory, display, resistance, security, classic, avant_garde, sport)
+        x_households = x_axes["households"]
+        x_he_households = x_axes["he_households"]
+        x_companies = x_axes["companies"]
+        x_he_companies = x_axes["he_companies"]
 
-                # sales
-                product.households_sales,
-                product.high_end_households_sales,
-                product.companies_sales,
-                product.high_end_companies_sales,
-                product.total_sales,
+        y_households = y_axes["households"]
+        y_he_households = y_axes["he_households"]
+        y_companies = y_axes["companies"]
+        y_he_companies = y_axes["he_companies"]
 
-                # ads
-                product.advertizing,
-                product.households_awareness,
-                product.high_end_households_awareness,
-                product.companies_awareness,
-                product.high_end_companies_awareness,
-                product.total_awareness,
-                product.total_awareness - (product.advertizing * 0.2),
+        w_households = widths["households"]
+        w_he_households = widths["he_households"]
+        w_companies = widths["companies"]
+        w_he_companies = widths["he_companies"]
+        
+        # PLOT DEMAND #
+        fig, ax = plt.subplots(2,2)
 
-                # 
-                product.channel_investments,
-                product.specialist,
-                product.generalist,
-                product.online,
-            ]
-        return situation
+        # HOUSEHOULDS
+        axh = ax[0,0].twinx()
+        axh.bar(x_households, y_households, alpha=0.2, color=["purple"], width=w_households)
+        axh.set_ylabel("sales %")
+        axh.legend(loc="upper left")
 
+        # Trendline
+        z = np.polyfit(x_households, y_households, 3)
+        p = np.poly1d(z)
+        trendline_y_at_x_is_zero = p(0)
+        y_offset = 0 - trendline_y_at_x_is_zero
+
+        # Update trendline
+        z = np.polyfit(x_households, [y+y_offset for y in y_households], 3)
+        p = np.poly1d(z)
+
+        ax[0,0].plot(x_households, p(x_households))
+
+        # HE HOUSEHOULDS
+        axhh = ax[0,1].twinx()
+        axhh.bar(x_he_companies, y_he_households, alpha=0.2, color=["orange"], width=w_he_households)
+        axhh.set_ylabel("sales %")
+        axhh.legend(loc="upper left")
+
+        # Trendline
+        z = np.polyfit(x_he_households, y_he_households, 3)
+        p = np.poly1d(z)
+        trendline_y_at_x_is_zero = p(0)
+        y_offset = 0 - trendline_y_at_x_is_zero
+
+        # Update trendline
+        z = np.polyfit(x_households, [y+y_offset for y in y_households], 3)
+        p = np.poly1d(z)
+
+        ax[0,1].plot(x_he_households, p(x_he_households))
+
+        # COMPANIES
+        axc = ax[1,0].twinx()
+        axc.bar(x_companies, y_companies, alpha=0.2, color=["green"], width=w_companies)
+        axc.set_ylabel("sales %")
+        axc.legend(loc="upper left")
+
+        # Trendline
+        z = np.polyfit(x_companies, y_companies, 3)
+        p = np.poly1d(z)
+        trendline_y_at_x_is_zero = p(0)
+        y_offset = 0 - trendline_y_at_x_is_zero
+
+        # Update trendline
+        z = np.polyfit(x_companies, [y+y_offset for y in y_companies], 3)
+        p = np.poly1d(z)
+
+        ax[1,0].plot(x_companies, p(x_companies))
+
+        # HE COMPANIES
+        axhc = ax[1,1].twinx()
+        axhc.bar(x_he_companies, y_he_companies, alpha=0.2, color=["blue"], width=w_he_companies)
+        axhc.set_ylabel("sales %")
+        axhc.legend(loc="upper left")
+
+        # Trendline
+        z = np.polyfit(x_he_companies, y_he_companies, 3)
+        p = np.poly1d(z)
+        trendline_y_at_x_is_zero = p(0)
+        y_offset = 0 - trendline_y_at_x_is_zero
+
+        # Update trendline
+        z = np.polyfit(x_he_companies, [y+y_offset for y in y_he_companies], 3)
+        p = np.poly1d(z)
+
+        ax[1,1].plot(x_he_companies, p(x_he_companies))
+
+        fig.tight_layout()
+        plt.show()
 
 
 class DisplayPhone:
