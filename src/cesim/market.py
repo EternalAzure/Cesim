@@ -3,6 +3,7 @@ from typing import Any, Literal
 import copy
 import numpy as np
 import pandas as pd
+import copy
 
 from .product import Product
 
@@ -44,7 +45,7 @@ class MarketHistory:
         self.columns = ("europe", "asia")
         self.rows = (1,2,3,4,5,6,7,8)
         self._index = 0
-        self._nrounds = 5
+        self._nrounds = 6
 
 
     def add_round(self, europe:Market, asia:Market):
@@ -54,28 +55,28 @@ class MarketHistory:
     def loc(self, row:int, column:str) -> Market:
         row -= 1
         if column == "europe":
-            return self.europe[row]
+            return copy.deepcopy(self.europe[row])
         if column == "asia":
-            return self.asia[row]
+            return copy.deepcopy(self.asia[row])
         raise ValueError()
 
     def row(self, index:int) -> tuple[Market, Market]:
-        return (self.europe[index], self.asia[index])
+        return (copy.deepcopy(self.europe[index]), copy.deepcopy(self.asia[index]))
 
     def column(self, name:str) -> list[Market]:
         if name == "europe":
-            return self.europe
+            return copy.deepcopy(self.europe)
         elif name == "asia":
-            return self.asia
+            return copy.deepcopy(self.asia)
         raise KeyError()
 
     def rounds(self):
-        return self.IterRounds(self.europe, self.asia)
+        return self.IterRounds(copy.deepcopy(self.europe), copy.deepcopy(self.asia))
 
     class IterRounds:
         def __init__(self, europe:list[Market], asia:list[Market]) -> None:
             self._index = 0
-            self._nrounds = 5
+            self._nrounds = 6
             self.europe = europe
             self.asia = asia
 
@@ -84,7 +85,7 @@ class MarketHistory:
 
         def __next__(self) -> tuple[int, Market, Market]:
             if self._index < self._nrounds:
-                item = (self._index+1, self.europe[self._index], self.asia[self._index])
+                item = (self._index+1, copy.deepcopy(self.europe[self._index]), copy.deepcopy(self.asia[self._index]))
                 self._index += 1
                 return item
             else:
