@@ -37,12 +37,12 @@ class MarketLocations:
     
 
 class MarketHistory:
-    europe: list[Market] = []
-    asia: list[Market] = []
-    columns = ("europe", "asia")
-    rows = (1,2,3,4,5,6,7,8)
 
     def __init__(self) -> None:
+        self.europe: list[Market] = []
+        self.asia: list[Market] = []
+        self.columns = ("europe", "asia")
+        self.rows = (1,2,3,4,5,6,7,8)
         self._index = 0
         self._nrounds = 5
 

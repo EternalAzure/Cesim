@@ -959,6 +959,153 @@ class Analyse:
         ax.set_ylabel("awareness k")
         ax.legend(loc="upper right")
         plt.show()
+        
+    def all_advertizing_x_sales_by_price(self):
+        low_price = self.market.price().low.products
+        mid_price = self.market.price().mid.products
+        high_price = self.market.price().high.products
+
+        fig, ax = plt.subplots(2,2)
+        fig.suptitle(f"{self.title} Advertizing effectiveness")
+
+        width = max([p.advertizing for p in self.market.products]) / len(self.market.products) / 2
+        for i, product in enumerate(low_price):
+            low = ax[0,0].bar(product.advertizing, product.households_sales, width, color="tab:blue", alpha=0.5)
+            ax[0,1].bar(product.advertizing, product.he_households_sales, width, color="tab:blue", alpha=0.5)
+            ax[1,0].bar(product.advertizing, product.companies_sales, width, color="tab:blue", alpha=0.5)
+            ax[1,1].bar(product.advertizing, product.he_companies_sales, width, color="tab:blue", alpha=0.5)
+
+        for i, product in enumerate(mid_price):
+            mid = ax[0,0].bar(product.advertizing, product.households_sales, width, color="tab:orange", alpha=0.5)
+            ax[0,1].bar(product.advertizing, product.he_households_sales, width, color="tab:orange", alpha=0.5)
+            ax[1,0].bar(product.advertizing, product.companies_sales, width, color="tab:orange", alpha=0.5)
+            ax[1,1].bar(product.advertizing, product.he_companies_sales, width, color="tab:orange", alpha=0.5)
+
+        for i, product in enumerate(high_price):
+            high = ax[0,0].bar(product.advertizing, product.households_sales, width, color="tab:green", alpha=0.5)
+            ax[0,1].bar(product.advertizing, product.he_households_sales, width, color="tab:green", alpha=0.5)
+            ax[1,0].bar(product.advertizing, product.companies_sales, width, color="tab:green", alpha=0.5)
+            ax[1,1].bar(product.advertizing, product.he_companies_sales, width, color="tab:green", alpha=0.5)
+
+        ax[0,0].set_title("Households")
+        ax[0,1].set_title("HE Households")
+        ax[1,0].set_title("Companies")
+        ax[1,1].set_title("HE Companies")
+        
+        ax[0,0].set_xlabel("ads €")
+        ax[0,1].set_xlabel("ads €")
+        ax[1,0].set_xlabel("ads €")
+        ax[1,1].set_xlabel("ads €")
+
+        ax[0,0].set_ylabel("sales k")
+        ax[0,1].set_ylabel("sales k")
+        ax[1,0].set_ylabel("sales k")
+        ax[1,1].set_ylabel("sales k")
+
+        low.set_label("low price")          #type: ignore
+        mid.set_label("mid price")          #type: ignore
+        high.set_label("high price")        #type: ignore
+        fig.legend(loc="outside upper left")
+        fig.tight_layout()
+        plt.show()
+        
+    def all_advertizing_x_sales_by_battery(self):
+        low_battery = self.market.battery().low.products
+        mid_battery = self.market.battery().mid.products
+        high_battery = self.market.battery().high.products
+
+        fig, ax = plt.subplots(2,2)
+        fig.suptitle(f"{self.title} Advertizing effectiveness")
+
+        width = max([p.advertizing for p in self.market.products]) / len(self.market.products) / 2
+        for i, product in enumerate(low_battery):
+            low = ax[0,0].bar(product.advertizing, product.households_sales, width, color="tab:blue", alpha=0.5)
+            ax[0,1].bar(product.advertizing, product.he_households_sales, width, color="tab:blue", alpha=0.5)
+            ax[1,0].bar(product.advertizing, product.companies_sales, width, color="tab:blue", alpha=0.5)
+            ax[1,1].bar(product.advertizing, product.he_companies_sales, width, color="tab:blue", alpha=0.5)
+
+        for i, product in enumerate(mid_battery):
+            mid = ax[0,0].bar(product.advertizing, product.households_sales, width, color="tab:orange", alpha=0.5)
+            ax[0,1].bar(product.advertizing, product.he_households_sales, width, color="tab:orange", alpha=0.5)
+            ax[1,0].bar(product.advertizing, product.companies_sales, width, color="tab:orange", alpha=0.5)
+            ax[1,1].bar(product.advertizing, product.he_companies_sales, width, color="tab:orange", alpha=0.5)
+
+        for i, product in enumerate(high_battery):
+            high = ax[0,0].bar(product.advertizing, product.households_sales, width, color="tab:green", alpha=0.5)
+            ax[0,1].bar(product.advertizing, product.he_households_sales, width, color="tab:green", alpha=0.5)
+            ax[1,0].bar(product.advertizing, product.companies_sales, width, color="tab:green", alpha=0.5)
+            ax[1,1].bar(product.advertizing, product.he_companies_sales, width, color="tab:green", alpha=0.5)
+
+        ax[0,0].set_title("Households")
+        ax[0,1].set_title("HE Households")
+        ax[1,0].set_title("Companies")
+        ax[1,1].set_title("HE Companies")
+        
+        ax[0,0].set_xlabel("ads €")
+        ax[0,1].set_xlabel("ads €")
+        ax[1,0].set_xlabel("ads €")
+        ax[1,1].set_xlabel("ads €")
+
+        ax[0,0].set_ylabel("sales k")
+        ax[0,1].set_ylabel("sales k")
+        ax[1,0].set_ylabel("sales k")
+        ax[1,1].set_ylabel("sales k")
+
+        low.set_label("low battery")          #type: ignore
+        mid.set_label("mid battery")          #type: ignore
+        high.set_label("high battery")        #type: ignore
+        fig.legend(loc="outside upper left")
+        fig.tight_layout()
+        plt.show()
+        
+    def all_advertizing_x_sales_by_performance(self):
+        low_performance = self.market.performance().low.products
+        mid_performance = self.market.performance().mid.products
+        high_performance = self.market.performance().high.products
+
+        fig, ax = plt.subplots(2,2)
+        fig.suptitle(f"{self.title} Advertizing effectiveness")
+
+        width = max([p.advertizing for p in self.market.products]) / len(self.market.products) / 2
+        for i, product in enumerate(low_performance):
+            low = ax[0,0].bar(product.advertizing, product.households_sales, width, color="tab:blue", alpha=0.5)
+            ax[0,1].bar(product.advertizing, product.he_households_sales, width, color="tab:blue", alpha=0.5)
+            ax[1,0].bar(product.advertizing, product.companies_sales, width, color="tab:blue", alpha=0.5)
+            ax[1,1].bar(product.advertizing, product.he_companies_sales, width, color="tab:blue", alpha=0.5)
+
+        for i, product in enumerate(mid_performance):
+            mid = ax[0,0].bar(product.advertizing, product.households_sales, width, color="tab:orange", alpha=0.5)
+            ax[0,1].bar(product.advertizing, product.he_households_sales, width, color="tab:orange", alpha=0.5)
+            ax[1,0].bar(product.advertizing, product.companies_sales, width, color="tab:orange", alpha=0.5)
+            ax[1,1].bar(product.advertizing, product.he_companies_sales, width, color="tab:orange", alpha=0.5)
+
+        for i, product in enumerate(high_performance):
+            high = ax[0,0].bar(product.advertizing, product.households_sales, width, color="tab:green", alpha=0.5)
+            ax[0,1].bar(product.advertizing, product.he_households_sales, width, color="tab:green", alpha=0.5)
+            ax[1,0].bar(product.advertizing, product.companies_sales, width, color="tab:green", alpha=0.5)
+            ax[1,1].bar(product.advertizing, product.he_companies_sales, width, color="tab:green", alpha=0.5)
+
+        ax[0,0].set_title("Households")
+        ax[0,1].set_title("HE Households")
+        ax[1,0].set_title("Companies")
+        ax[1,1].set_title("HE Companies")
+        
+        ax[0,0].set_xlabel("ads €")
+        ax[0,1].set_xlabel("ads €")
+        ax[1,0].set_xlabel("ads €")
+        ax[1,1].set_xlabel("ads €")
+
+        ax[0,0].set_ylabel("sales k")
+        ax[0,1].set_ylabel("sales k")
+        ax[1,0].set_ylabel("sales k")
+        ax[1,1].set_ylabel("sales k")
+
+        low.set_label("low perf")          #type: ignore
+        mid.set_label("mid perf")          #type: ignore
+        high.set_label("high perf")        #type: ignore
+        fig.legend(loc="outside upper left")
+        fig.tight_layout()
+        plt.show()
 
     def awareness_x_sales(self):
         source = self.market.products.copy()
@@ -2346,6 +2493,7 @@ class Analyse:
         p = np.poly1d(z)
 
         ax[0,0].plot(x_households, p(x_households))
+        ax[0,0].set_yticks([])
 
         # HE HOUSEHOULDS
         axhh = ax[0,1].twinx()
@@ -2364,6 +2512,7 @@ class Analyse:
         p = np.poly1d(z)
 
         ax[0,1].plot(x_he_households, p(x_he_households))
+        ax[0,1].set_yticks([])
 
         # COMPANIES
         axc = ax[1,0].twinx()
@@ -2382,6 +2531,7 @@ class Analyse:
         p = np.poly1d(z)
 
         ax[1,0].plot(x_companies, p(x_companies))
+        ax[1,0].set_yticks([])
 
         # HE COMPANIES
         axhc = ax[1,1].twinx()
@@ -2400,6 +2550,7 @@ class Analyse:
         p = np.poly1d(z)
 
         ax[1,1].plot(x_he_companies, p(x_he_companies))
+        ax[1,1].set_yticks([])
 
         fig.tight_layout()
         plt.show()

@@ -8,6 +8,7 @@ from pprint import pprint
 
 from .product import Product, Phone
 from .market import Market, MarketHistory
+from .demand_model import RelativeDemandModel, AbsoluteLinearDemandModel
 
 
 
@@ -103,127 +104,6 @@ class ManufacturingCosts:
     tech_display:float
     tech_resistance:float
     tech_security:float
-
-
-class DemandModel:
-
-    def __init__(self, market:Market) -> None:
-        self.market = market
-        self.h_model = self._make_model(market.households())
-        self.hh_model = self._make_model(market.he_households())
-        self.c_model = self._make_model(market.companies())
-        self.hc_model = self._make_model(market.he_companies())
-        self.model = self._make_model(market)
-        
-        #price_elasticity = self.model.params["log_price"]
-
-    def predict_demand(self, phone:Phone|Product):
-
-        def make_hypothetical(average_price:float, average_performance:float, average_battery:float):
-            hypothetical = pd.DataFrame({
-                "log_price": [np.log(phone.price)],
-                "log_battery": [np.log(phone.battery)],
-                "log_performance": [np.log(phone.performance)],
-                "log_advertizing": [phone.advertizing],
-                "log_channel": [np.log1p(phone.channel_investments)],
-                
-                "design_Avant_garde": [
-                    float(phone.design == "Avant garde")
-                ],
-                "design_Sport": [
-                    float(phone.design == "Sport")
-                ],
-
-                "camera": [int(phone.camera)],
-                "memory": [int(phone.memory)],
-                "display": [int(phone.display)],
-                "resistance": [int(phone.resistance)],
-                "security": [int(phone.security)],
-            })
-            return sm.add_constant(hypothetical, has_constant="add")
-
-        h_X = make_hypothetical(
-            self.market.households().stats.average_price(),
-            self.market.households().stats.average_performance(),
-            self.market.households().stats.average_battery())
-        hh_X = make_hypothetical(
-            self.market.he_households().stats.average_price(),
-            self.market.he_households().stats.average_performance(),
-            self.market.he_households().stats.average_battery())
-        c_X = make_hypothetical(
-            self.market.companies().stats.average_price(),
-            self.market.companies().stats.average_performance(),
-            self.market.companies().stats.average_battery())
-        hc_X = make_hypothetical(
-            self.market.he_companies().stats.average_price(),
-            self.market.he_companies().stats.average_performance(),
-            self.market.he_companies().stats.average_battery())
-        
-
-        h_demand = float(
-            np.exp(self.h_model.predict(h_X).iloc[0])
-        )
-
-        hh_demand = float(
-            np.exp(self.hh_model.predict(hh_X).iloc[0])
-        )
-
-        c_demand = float(
-            np.exp(self.c_model.predict(c_X).iloc[0])
-        )
-
-        hc_demand = float(
-            np.exp(self.hc_model.predict(hc_X).iloc[0])
-        )
-
-        total_demand = h_demand + hh_demand + c_demand + hc_demand
-
-        return h_demand, hh_demand, c_demand, hc_demand, total_demand
-
-    def _make_model(self, market:Market):
-        
-        df = pd.DataFrame({
-            "price": [p.price for p in market.products],
-            "battery": [p.battery for p in market.products],
-            "performance": [p.performance for p in market.products],
-            "advertizing": [p.advertizing for p in market.products],
-            "channel investments": [p.channel_investments for p in market.products],
-            
-            "design": [p.design for p in market.products],
-            
-            "camera": [int(p.camera) for p in market.products],
-            "memory": [int(p.memory) for p in market.products],
-            "display": [int(p.display) for p in market.products],
-            "resistance": [int(p.resistance) for p in market.products],
-            "security": [int(p.security) for p in market.products],
-            "sales": [p.total_sales for p in market.products],
-        })
-
-        design_dummies = pd.get_dummies(
-            df["design"],
-            prefix="design",
-            drop_first=True,
-            dtype=float
-        )
-
-        X = pd.DataFrame({
-            "log_price": np.log(df["price"]),
-            "log_battery": np.log(df["battery"]),
-            "log_performance": np.log(df["performance"]),
-            "log_advertizing": df["advertizing"],
-            "log_channel": np.log1p(df["channel investments"]),
-
-            "camera": df["camera"],
-            "memory": df["memory"],
-            "display": df["display"],
-            "resistance": df["resistance"],
-            "security": df["security"],
-        })
-        X = pd.concat([X, design_dummies], axis=1)
-        X = sm.add_constant(X)
-        y = np.log(df["sales"])
-
-        return sm.OLS(y, X).fit()
 
 
 class AdvertizingModel:
@@ -731,7 +611,10 @@ class Simulation:
         self.data = data
 
         round_5_europe = data.loc(5, "europe")
+        round_4_europe = data.loc(4, "europe")
+        round_3_europe = data.loc(3, "europe")
         round_5_asia = data.loc(5, "asia")
+        model = AbsoluteLinearDemandModel()
 
         actual_sales = []
         predicted_sales = []
@@ -740,16 +623,19 @@ class Simulation:
         hh_error = []
         c_error = []
         hc_error = []
-        test_set:list[Product] = round_5_asia.products
-        training_set:list[Product] = round_5_asia.products
-        training_set += self.add_no_ads_phone_europe()
-        training_set += self.add_no_ads_phone_asia()
+
+        training_set:list[Product] = round_5_europe.products #+round_4_europe.products+round_3_europe.products
+        test_set:list[Product] = training_set.copy()
+        #training_set += self.add_no_ads_phone_europe()
+        #training_set += self.add_no_ads_phone_asia()
         for index in range(len(test_set)):
             products = test_set.copy()
             test_product = products.pop(index)
+            model.train(Market(products))
             
-            model = DemandModel(Market(training_set))
-            h, hh, c, hc, total = model.predict_demand(test_product)
+            #h, hh, c, hc, total = model.predict_demand(test_product)
+            h, hh, c, hc, total = model.predict(test_product)
+            
             actual_sales.append(test_product.total_sales)
             predicted_sales.append(total)
 
@@ -766,42 +652,42 @@ class Simulation:
         )[0, 1]
         print(f"{correlation=}")
         """
-            EXTRA           ORIGINAL        EXTRA EXTRA     XTR XTR +       
-                                                            NO LOG ADS
-            CORRELATION
-            0.8132          0.66201         0.8311          0.8625
+            EXTRA           ORIGINAL        EXTRA EXTRA     XTR XTR +       XTR XTR +       INGRP DVNC
+                                                            NO LOG ADS      NO LOGS ADS, 
+            CORRELATION                                                     BTTR, PRFRM
+            0.8132          0.66201         0.8311          0.8625          0.8875          0.7134
 
             AVERAGE
-            31.18           36.30           30.41           28.69
+            31.18           36.30           30.41           28.69           33.64           36.15
 
-            48.86           53.48           51.76           47.34
-            46.57           51.15           45.72           50.48
-            27.64           33.19           32.62           31.45
-            57.54           61.70           57.48           59.59
+            48.86           53.48           51.76           47.34           33.80 !         46.96
+            46.57           51.15           45.72 !         50.48           56.04           58.26
+            27.64           33.19           32.62 !         31.45           44.28           35.48
+            57.54           61.70           57.48 !         59.59           80.08           70.93
 
             MEDIAN
-            32.0            35              29              26
+            32.0            35              29              26              33              28
 
-            39.0            48              41              33
-            41.5            35              36              36
-            20.0            32              17              18
-            48.5            56              47              52
+            39.0            48              41              33              26              39
+            41.5            35              36              36              54              32
+            20.0            32              17              18              45              35
+            48.5            56              47              52              57              65
 
             MAX 
-            102             103             98              92
+            102             103             98              92              88              101
 
-            169             170             237             246
-            175             270             177             181
-            137             138             174             177
-            174             190             177             215
+            169             170             237             246             87              169
+            175             270             177             181             153             262
+            137             138             174             177             171             138
+            174             190             177             215             330             264
             
             MIN 
-            2               0               0
+            2               0               0                               3               0
 
-            0               1               3
-            1               2               1
-            1               0               0
-            2               4               3
+            0               1               3                               0               2
+            1               2               1                               15              3
+            1               0               0                               2               4
+            2               4               3                               22              3
         """
 
         print("AVERAGE")
@@ -810,6 +696,7 @@ class Simulation:
         print(f"HH:{sum(hh_error) / len(hh_error):>4}")
         print(f"C: {sum(c_error) / len(c_error):>4}")
         print(f"HC: {sum(hc_error) / ( len(hc_error)):>4}")
+        print("")
     
         print("MEDIAN")
         print(np.median(total_error))
@@ -817,6 +704,7 @@ class Simulation:
         print(np.median(hh_error))
         print(np.median(c_error))
         print(np.median(hc_error))
+        print("")
     
         print("MAX")
         print(max(total_error))
@@ -824,6 +712,7 @@ class Simulation:
         print(max(hh_error))
         print(max(c_error))
         print(max(hc_error))
+        print("")
     
         print("MIN")
         print(min(total_error))
@@ -831,6 +720,7 @@ class Simulation:
         print(min(hh_error))
         print(min(c_error))
         print(min(hc_error))
+        print("")
     
 
 
