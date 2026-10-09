@@ -31,11 +31,11 @@ def calculate_line(x1:int, x2):
 
 
 def main() -> None:
-    round = int(input("Round: "))
+    rnd = int(input("Round: "))
 
     data = load_markets()
-    analyse_asia = Analyse(data, round, "asia")
-    analyse_europe = Analyse(data, round, "europe")
+    analyse_asia = Analyse(data, rnd, "asia")
+    analyse_europe = Analyse(data, rnd, "europe")
 
 
     # -- ALOITA TÄSTÄ -- #
@@ -91,7 +91,7 @@ def main() -> None:
 
     # SIMULOI
     sim = Simulation()
-    sim.play(data)
+    sim.test_model_europe(rnd)
 
 
 

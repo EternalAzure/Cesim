@@ -19,6 +19,7 @@ class Phone:
     
     design:Literal["Classic", "Avant garde", "Sport"]
 
+    warranty:int
     households_sales:float = 0
     he_households_sales:float = 0
     companies_sales:float = 0

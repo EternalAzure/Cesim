@@ -21,67 +21,6 @@ class SalesForecast:
         self.high_end_companies = high_end_companies
 
 
-class Effects:
-    """A simple multiplier on demand"""
-
-    def __init__(self, households:float, he_households:float, companies:float, he_companies:float) -> None:
-        self.households:float = households
-        self.he_households:float = he_households
-        self.companies:float = companies
-        self.he_companies:float = he_companies
-
-@dataclass
-class PreferenceDistribution:
-    # -- DESIGN -- #
-    h_sport:float
-    h_avant_garde:float
-    h_classic:float
-
-    hh_sport:float
-    hh_avant_garde:float
-    hh_classic:float
-
-    c_sport:float
-    c_avant_garde:float
-    c_classic:float
-
-    hc_sport:float
-    hc_avant_garde:float
-    hc_classic:float
-
-    # -- FEATURES -- #
-    h_camera:float
-    h_memory:float
-    h_display:float
-    h_resistance:float
-    h_security:float
-
-    hh_camera:float
-    hh_memory:float
-    hh_display:float
-    hh_resistance:float
-    hh_security:float
-
-    c_camera:float
-    c_memory:float
-    c_display:float
-    c_resistance:float
-    c_security:float
-
-    hc_camera:float
-    hc_memory:float
-    hc_display:float
-    hc_resistance:float
-    hc_security:float
-
-
-    def design_multipliers(self, design:Literal["Classic", "Avant garde", "Sport"]):
-        """Return h, hh, c, hc multipliers"""
-        if design == "Classic": return self.h_classic, self.hh_classic, self.c_classic, self.hc_classic
-        if design == "Avant garde": return self.h_avant_garde, self.hh_avant_garde, self.c_avant_garde, self.hc_avant_garde
-        if design == "Sport": return self.h_sport, self.hh_sport, self.c_sport, self.hc_sport
-
-
 @dataclass
 class ManufacturingCosts:
 
@@ -306,312 +245,42 @@ class AdvertizingModel:
         return y_arr[robust_z <= threshold].tolist()
 
 
-class SpecsModel:
-
-
-    def performances_effects_on_demand(self, performance:int, average_performance:int) -> tuple[Effects, Effects]:
-        """Returns multipliers on demand. Europe and Asia."""
-        ratio = performance / average_performance
-        x = ratio - 1
-
-        if ratio < 0.75: # -50 - -25
-            # Asia
-            y_households    = x * 0.5864 + 2.52
-            y_he_households = x * 1.1276 - 3.01
-            y_companies     = x * 0.6356 + 2.49
-            y_hc_companies  = x * 1.0728 - 1.45
-
-            asia = Effects(
-                y_households,
-                y_he_households,
-                y_companies,
-                y_hc_companies
-            )
-
-            # Europe
-            y_households    = x * 0.4200 + 2.23
-            y_he_households = x * 1.0252 - 0.44
-            y_companies     = x * 0.5336 + 2.47
-            y_hc_companies  = x * 1.0512 - 0.95
-
-            europe = Effects(
-                y_households,
-                y_he_households,
-                y_companies,
-                y_hc_companies
-            )
-
-        elif ratio < 0 and ratio >=0.75:
-            # Asia
-            y_households    = x * 0.4856 + 0
-            y_he_households = x * 1.2480 + 0
-            y_companies     = x * 0.5360 + 0
-            y_hc_companies  = x * 1.1308 + 0
-
-            asia = Effects(
-                y_households,
-                y_he_households,
-                y_companies,
-                y_hc_companies
-            )
-
-            # Europe
-            y_households    = x * 0.3308 + 0
-            y_he_households = x * 1.0428 + 0
-            y_companies     = x * 0.4348 + 0
-            y_hc_companies  = x * 1.0892 + 0
-
-            europe = Effects(
-                y_households,
-                y_he_households,
-                y_companies,
-                y_hc_companies
-            )
-
-        elif ratio > 0 and ratio <=1.25:
-            # Asia
-            y_households    = x * 0.4224 + 0
-            y_he_households = x * 1.3460 + 0
-            y_companies     = x * 0.4720 + 0
-            y_hc_companies  = x * 1.1760 + 0
-
-            asia = Effects(
-                y_households,
-                y_he_households,
-                y_companies,
-                y_hc_companies
-            )
-
-            # Europe
-            y_households    = x * 0.2768 + 0
-            y_he_households = x * 1.0560 + 0
-            y_companies     = x * 0.3736 + 0
-            y_hc_companies  = x * 1.1184 + 0
-
-            europe = Effects(
-                y_households,
-                y_he_households,
-                y_companies,
-                y_hc_companies
-            )
-
-        elif ratio > 1.25: # +25 - +50
-            # Asia
-            y_households    = x * 0.3784 + 1.1
-            y_he_households = x * 1.4300 - 2.1
-            y_companies     = x * 0.4268 + 1.13
-            y_hc_companies  = x * 1.2132 - 0.93
-
-            asia = Effects(
-                y_households,
-                y_he_households,
-                y_companies,
-                y_hc_companies
-            )
-
-            # Europe
-            y_households    = x * 0.2404 + 0.91
-            y_he_households = x * 1.0668 - 0.27
-            y_companies     = x * 0.3308 + 1.07
-            y_hc_companies  = x * 1.1184 - 0.6
-
-            europe = Effects(
-                y_households,
-                y_he_households,
-                y_companies,
-                y_hc_companies
-            )
-
-        else: raise Exception("Jotain on pielessä kaavassa")
-        return europe, asia
-
-    def batterys_effects_on_demand(self, battery:int, average_battery:int) -> Effects:
-        """Returns multipliers on demand. Europe and Asia."""
-        ratio = battery / average_battery
-        x = ratio - 1
-
-        if ratio < 0.75: # -50 - -25
-            # Europe & Asia
-            y_households    = x * 0.4200 + 2.23
-            y_he_households = x * 1.0252 - 0.44
-            y_companies     = x * 0.5336 + 2.47
-            y_hc_companies  = x * 1.0512 - 0.95
-
-            europe_and_asia = Effects(
-                y_households,
-                y_he_households,
-                y_companies,
-                y_hc_companies
-            )
-
-        elif ratio < 0 and ratio >=0.75:
-            # Europe & Asia
-            y_households    = x * 0.3780 + 0
-            y_he_households = x * 0.5288 + 0
-            y_companies     = x * 1.1536 + 0
-            y_hc_companies  = x * 1.2724 + 0
-
-            europe_and_asia = Effects(
-                y_households,
-                y_he_households,
-                y_companies,
-                y_hc_companies
-            )
-
-        elif ratio > 0 and ratio <=1.25:
-            # Europe & Asia
-            y_households    = x * 0.3212 + 0
-            y_he_households = x * 0.4668 + 0
-            y_companies     = x * 1.2128 + 0
-            y_hc_companies  = x * 1.3880 + 0
-
-            europe_and_asia = Effects(
-                y_households,
-                y_he_households,
-                y_companies,
-                y_hc_companies
-            )
-
-        elif ratio > 1.25: # +25 - +50
-            # Europe & Asia
-            y_households    = x * 0.2820 + 0.98
-            y_he_households = x * 0.4220 + 1.12
-            y_companies     = x * 1.2620 - 1.23
-            y_hc_companies  = x * 1.4884 - 2.51
-
-            europe_and_asia = Effects(
-                y_households,
-                y_he_households,
-                y_companies,
-                y_hc_companies
-            )
-
-
-        else: raise Exception("Jotain on pielessä kaavassa")
-        return europe_and_asia
-
-    def _function(self, x:float):
-        return x * 0.5864 + 2.52
-
 
 class Simulation:
 
-    manufacturing = ManufacturingCosts(
-        euro_performance_min=0.08,
-        euro_performance_max=1.08,
-        euro_battery_min=0.09,    
-        euro_battery_max=1.25,    
-        euro_camera=9.77,
-        euro_memory=9.77,
-        euro_display=9.77,
-        euro_resistance=9.77,
-        euro_security=9.77,
+    def __init__(self) -> None:
+        self.model_europe = DemandModel()
+        self.model_asia = DemandModel()
+        eu_data, asia_data = self.training_data()
+        self.model_europe.train(Market(eu_data))
+        self.model_asia.train(Market(asia_data))
 
-        tech_camera=6,
-        tech_memory=6,
-        tech_display=1,
-        tech_resistance=7,
-        tech_security=2,
+        self.manufacturing = ManufacturingCosts(
+            euro_performance_min=0.08,
+            euro_performance_max=1.08,
+            euro_battery_min=0.09,    
+            euro_battery_max=1.25,    
+            euro_camera=9.77,
+            euro_memory=9.77,
+            euro_display=9.77,
+            euro_resistance=9.77,
+            euro_security=9.77,
 
-        tech_battery=0.25,
-        tech_performance=0.25,  
-    )
+            tech_camera=6,
+            tech_memory=6,
+            tech_display=1,
+            tech_resistance=7,
+            tech_security=2,
 
-    preferences_europe = PreferenceDistribution(
-        # -- DESIGN -- #
-        h_sport = 0.85,
-        h_avant_garde = 0.11,
-        h_classic = 0.0377,
+            tech_battery=0.25,
+            tech_performance=0.25,  
+        )
 
-        hh_sport = 0.604,
-        hh_avant_garde = 0.354,
-        hh_classic = 0.0429,
+    def find_best_phone(self):
+        pass
 
-        c_sport = 0.73,
-        c_avant_garde = 0.19,
-        c_classic = 0.0827,
 
-        hc_sport = 0.63,
-        hc_avant_garde = 0.29,
-        hc_classic = 0.077,
-
-        # -- FEATURES -- #
-        h_camera = 94.69,
-        h_memory = 70.6,
-        h_display = 32.28,
-        h_resistance = 28.33,
-        h_security = 70.33,
-
-        hh_camera = 91.6,
-        hh_memory = 70.39,
-        hh_display = 18.15,
-        hh_resistance = 26.14,
-        hh_security = 79.93,
-
-        c_camera = 86.6,
-        c_memory = 61.84,
-        c_display = 21.51,
-        c_resistance = 31.08,
-        c_security = 84.53,
-
-        hc_camera = 76.64,
-        hc_memory = 56.4,
-        hc_display = 14.02,
-        hc_resistance = 27.44,
-        hc_security = 91.48,
-    )
-
-    preferences_asia = PreferenceDistribution(
-        # -- DESIGN -- #
-        h_sport = 0.1379,
-        h_avant_garde = 0.2153,
-        h_classic = 0.6468,
-
-        hh_sport = 0.1157,
-        hh_avant_garde = 0.5491,
-        hh_classic = 0.37,
-
-        c_sport = 0.1041,
-        c_avant_garde = 0.3578,
-        c_classic = 0.5381,
-
-        hc_sport = 0.1072,
-        hc_avant_garde = 0.5634,
-        hc_classic = 0.3295,
-
-        # -- FEATURES -- #
-        h_camera = 65.55,
-        h_memory = 94.15,
-        h_display = 78.47,
-        h_resistance = 3.34,
-        h_security = 60.21,
-
-        hh_camera = 94.22,
-        hh_memory = 90.5,
-        hh_display = 45.09,
-        hh_resistance = 7.28,
-        hh_security = 65.33,
-
-        c_camera = 78.24,
-        c_memory = 89.48,
-        c_display = 64.22,
-        c_resistance = 5.51,
-        c_security = 64.68,
-
-        hc_camera = 92.07,
-        hc_memory = 83.2,
-        hc_display = 43.66,
-        hc_resistance = 9.66,
-        hc_security = 76.24,
-    )
-
-    specs_model = SpecsModel()
-
-    def play(self, data:MarketHistory):
-        self.data = data
-
-        round_5_europe = data.loc(5, "europe")
-        model = DemandModel()
+    def test_model_europe(self, r:int=5):
 
         actual_sales = []
         predicted_sales = []
@@ -621,15 +290,13 @@ class Simulation:
         c_error = []
         hc_error = []
 
-        training_set:list[Product] = round_5_europe.products
-        #training_set += self.add_no_ads_phone_europe()
-        #training_set += self.add_no_ads_phone_asia()
-        for index in range(len(training_set)):
-            products = training_set.copy()
+        test_set:list[Product] = self.model_europe.data().loc(r, "europe").products
+        for index in range(len(test_set)):
+            products = test_set.copy()
             test_product = products.pop(index)
-            model.train(Market(products))
+            #self.model_europe.train(Market(products))
             
-            h, hh, c, hc, total = model.predict(test_product)
+            h, hh, c, hc, total = self.model_europe.predict(test_product)
             
             actual_sales.append(test_product.total_sales)
             predicted_sales.append(total)
@@ -646,44 +313,6 @@ class Simulation:
             predicted_sales
         )[0, 1]
         print(f"{correlation=}")
-        """
-            EXTRA           ORIGINAL        EXTRA EXTRA     XTR XTR +       XTR XTR +       INGRP DVNC
-                                                            NO LOG ADS      NO LOGS ADS, 
-            CORRELATION                                                     BTTR, PRFRM
-            0.8132          0.66201         0.8311          0.8625          0.8875          0.7134
-
-            AVERAGE
-            31.18           36.30           30.41           28.69           33.64           36.15
-
-            48.86           53.48           51.76           47.34           33.80 !         46.96
-            46.57           51.15           45.72 !         50.48           56.04           58.26
-            27.64           33.19           32.62 !         31.45           44.28           35.48
-            57.54           61.70           57.48 !         59.59           80.08           70.93
-
-            MEDIAN
-            32.0            35              29              26              33              28
-
-            39.0            48              41              33              26              39
-            41.5            35              36              36              54              32
-            20.0            32              17              18              45              35
-            48.5            56              47              52              57              65
-
-            MAX 
-            102             103             98              92              88              101
-
-            169             170             237             246             87              169
-            175             270             177             181             153             262
-            137             138             174             177             171             138
-            174             190             177             215             330             264
-            
-            MIN 
-            2               0               0                               3               0
-
-            0               1               3                               0               2
-            1               2               1                               15              3
-            1               0               0                               2               4
-            2               4               3                               22              3
-        """
 
         print("AVERAGE")
         print(f"All: {sum(total_error) / len(total_error):>4}")
@@ -718,53 +347,58 @@ class Simulation:
         print("")
     
 
-
-
-
-    def add_no_ads_phone_europe(self) -> list[Product]:
-        # Aito
-        phone = Phone(
-            345,
-            225.64,
-            120,
-            115,
-            0,
-            0,
-            True,
-            True,
-            False,
-            False,
-            True,
-            "Sport",
-            households_sales=3.6,
-            he_households_sales=2.5,
-            companies_sales=4.5,
-            he_companies_sales=5.1,
-            total_sales=15.6,
-            brand="Pink",
+    def training_data(self):
+        data = self.model_europe.data()
+        eu_phones = data.loc(5, "europe").products.copy()
+        eu_phones.append(
+            Phone(
+                345,
+                225.64,
+                120,
+                115,
+                0,
+                0,
+                True,
+                True,
+                False,
+                False,
+                True,
+                "Sport",
+                households_sales=3.6,
+                he_households_sales=2.5,
+                companies_sales=4.5,
+                he_companies_sales=5.1,
+                total_sales=15.6,
+                brand="Pink",
+                warranty=24
+            )# type: ignore
         )
 
-        return [phone] # type:ignore
+        data = self.model_asia.data()
+        asia_phones = data.loc(5, "asia").products.copy()
 
-    def add_no_ads_phone_asia(self) -> list[Product]:
-        phone = Phone(
-            425,
-            253.98,
-            140,
-            120,
-            0,
-            0,
-            True,
-            True,
-            True,
-            False,
-            True,
-            "Avant garde",
-            households_sales=0.4,
-            he_households_sales=2.8,
-            companies_sales=1.1,
-            he_companies_sales=6.3,
-            total_sales=10.8,
-            brand="Pink",
+        asia_phones.append(
+            Phone(
+                425,
+                253.98,
+                140,
+                120,
+                0,
+                0,
+                True,
+                True,
+                True,
+                False,
+                True,
+                "Avant garde",
+                households_sales=0.4,
+                he_households_sales=2.8,
+                companies_sales=1.1,
+                he_companies_sales=6.3,
+                total_sales=10.8,
+                brand="Pink",
+                warranty=24
+            ) # type:ignore
         )
-        return [phone] # type:ignore
+        return eu_phones, asia_phones
+
