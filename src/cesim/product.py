@@ -26,32 +26,7 @@ class Phone:
     total_sales:float = 0
     brand:str = "Pink"
 
-@dataclass
-class RelativeTrainingPhone:
-    price:float                 # price / market average
-    cost:float                  # cost / price
 
-    performance:float           # performance / market average
-    battery:float               # battery / market average
-    ppe:float                   # performance / price
-    bpe:float                   # battery / price
-
-    advertizing:float           # ads / population
-    channel:float               # channel investments / population
-    
-    camera:int                  # 1 = yes
-    memory:int                  # 1 = yes
-    display:int                 # 1 = yes
-    resistance:int              # 1 = yes
-    security:int                # 1 = yes
-    
-    design:Literal["Classic", "Avant garde", "Sport"]
-
-    sales:float                 # sales / market total sales
-    brand_competition:float     # brands / 6
-    product_competition:float   # products / 30
-
-    warranty:int                # warranty
 
 @dataclass
 class TrainingPhone:

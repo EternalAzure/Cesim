@@ -8,7 +8,7 @@ from pprint import pprint
 
 from .product import Product, Phone
 from .market import Market, MarketHistory
-from .demand_model import RelativeDemandModel, AbsoluteLinearDemandModel
+from .demand_model import DemandModel
 
 
 
@@ -611,10 +611,7 @@ class Simulation:
         self.data = data
 
         round_5_europe = data.loc(5, "europe")
-        round_4_europe = data.loc(4, "europe")
-        round_3_europe = data.loc(3, "europe")
-        round_5_asia = data.loc(5, "asia")
-        model = AbsoluteLinearDemandModel()
+        model = DemandModel()
 
         actual_sales = []
         predicted_sales = []
@@ -624,16 +621,14 @@ class Simulation:
         c_error = []
         hc_error = []
 
-        training_set:list[Product] = round_5_europe.products #+round_4_europe.products+round_3_europe.products
-        test_set:list[Product] = training_set.copy()
+        training_set:list[Product] = round_5_europe.products
         #training_set += self.add_no_ads_phone_europe()
         #training_set += self.add_no_ads_phone_asia()
-        for index in range(len(test_set)):
-            products = test_set.copy()
+        for index in range(len(training_set)):
+            products = training_set.copy()
             test_product = products.pop(index)
             model.train(Market(products))
             
-            #h, hh, c, hc, total = model.predict_demand(test_product)
             h, hh, c, hc, total = model.predict(test_product)
             
             actual_sales.append(test_product.total_sales)

@@ -9,7 +9,7 @@ from .product import Product, Phone
 from .market import Market, MarketHistory
 from .analyse import Analyse, DisplayPhone
 from .simulation import Simulation
-from .demand_model import AbsoluteLinearDemandModel, RelativeDemandModel
+from .demand_model import DemandModel
 from .loader import load_markets
 
 

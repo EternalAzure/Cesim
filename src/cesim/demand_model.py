@@ -12,198 +12,13 @@ from multipledispatch import dispatch
 import warnings
 warnings.filterwarnings("ignore")
 
-from .product import Product, Phone, RelativeTrainingPhone, TrainingPhone
+from .product import Product, Phone, TrainingPhone
 from .market import Market, MarketHistory
 from .loader import load_markets
 
 
-class RelativeDemandModel:
 
-    def data(self) -> MarketHistory:
-        """Load market history for training"""
-        return load_markets()
-
-    def train(self, markets: list[Market]) -> RegressionResultsWrapper:
-        """Train a model with the data you want"""
-        products = []
-        for market in markets:
-            for product in market.products:
-                phone = self._product_to_training_data(product, market)
-                products.append(phone)
-
-        return self._make_model(products)
-
-        #price_elasticity = self.model.params["log_price"]
-
-    def predict(self, product:Product, market:Market, model:RegressionResultsWrapper):
-        """Predict demand for a product in a given market with model of your choice"""
-        phone = self._product_to_training_data(product, market)
-        hypothetical = self._hypothetical(phone)
-
-        demand = float(
-            np.exp(model.predict(hypothetical).iloc[0])
-        )
-
-        return demand
-
-    def test(self, markets:list[Market]):
-        """Test model trained on test data"""
-        market = markets[0]
-        for index in range(len(market.products)):
-            training_set = market.products.copy()
-            product = training_set.pop(index)
-            test_market = Market(training_set)
-
-            model = self.train([Market(training_set)])
-            
-            result = self.predict(product, test_market, model)
-            real_market_share = product.total_sales / market.total
-            difference = result - real_market_share
-            forecast_error_percent = difference / real_market_share * 100
-            print(f"{result=}")
-            print(f"{real_market_share=}")
-            print("")
-
-    def _make_model(self, products:list[RelativeTrainingPhone]):
-        df = pd.DataFrame({
-            "price": [p.price for p in products],
-            "cost": [p.cost for p in products],
-
-            "bpe": [p.bpe for p in products],
-            "ppe": [p.ppe for p in products],
-            "battery": [p.battery for p in products],
-            "performance": [p.performance for p in products],
-
-            "advertizing": [p.advertizing for p in products],
-            "channel": [p.channel for p in products],
-            
-            "design": [p.design for p in products],  
-
-            "camera": [p.camera for p in products],
-            "memory": [p.memory for p in products],
-            "display": [p.display for p in products],
-            "resistance": [p.resistance for p in products],
-            "security": [p.security for p in products],
-
-            "warranty": [p.warranty for p in products],
-
-            "brand_competition": [p.brand_competition for p in products],
-            "product_competition": [p.product_competition for p in products],
-
-            "sales": [p.sales for p in products],
-        })
-
-        design_dummies = pd.get_dummies(
-            df["design"],
-            prefix="design",
-            drop_first=True,
-            dtype=int
-        )
-
-        X = pd.DataFrame({
-            "price": df["price"],
-            "cost": df["cost"],
-
-            "bpe": df["bpe"],
-            "ppe": df["ppe"],
-            "battery": df["battery"],
-            "performance": df["performance"],
-
-            "advertizing": df["advertizing"],
-            "channel": df["channel"],
-
-            "camera": df["camera"],
-            "memory": df["memory"],
-            "display": df["display"],
-            "resistance": df["resistance"],
-            "security": df["security"],
-
-            "warranty": df["warranty"],
-
-            "brand_competition": df["brand_competition"],
-            "product_competition": df["product_competition"],
-        })
-        X = pd.concat([X, design_dummies], axis=1)
-        X = sm.add_constant(X)
-        y = np.log(df["sales"] / (1 - df["sales"]))
-
-
-        return sm.OLS(y, X).fit()
-
-    def _product_to_training_data(self, product:Product, market:Market) -> RelativeTrainingPhone:
-        brands = set()
-        for p in market.products: brands.add(p.brand)
-        brand_competition = len(brands) / 6
-        product_competition = len(market.products) / 30
-
-        return RelativeTrainingPhone(
-            np.log(product.price / market.stats.average_price()),
-            np.log(product.variable_unit_cost / product.price),
-
-            product.performance / market.stats.average_performance(),
-            product.battery / market.stats.average_battery(),
-            product.performance_per_euro / market.stats.average_ppe(),
-            product.battery_per_euro / market.stats.average_bpe(),
-
-            product.advertizing / market.total,
-            product.channel_investments / market.total,
-
-            int(product.camera),
-            int(product.memory),
-            int(product.display),
-            int(product.resistance),
-            int(product.security),
-
-            product.design, #type: ignore
-
-            product.total_sales / market.total,
-
-            brand_competition,
-            product_competition,
-
-            product.warranty,
-        )
-
-    def _hypothetical(self, phone:RelativeTrainingPhone) -> pd.DataFrame:
-        hypothetical = pd.DataFrame({
-            "price": [phone.price],
-            "cost": [phone.cost],
-
-            "bpe": [phone.bpe],
-            "ppe": [phone.ppe],
-            "battery": [phone.battery],
-            "performance": [phone.performance],
-
-            "advertizing": [phone.advertizing],
-            "channel": [phone.channel],
-            
-            "design_Avant_garde": [
-                int(phone.design == "Avant garde")
-            ],
-            "design_Sport": [
-                int(phone.design == "Sport")
-            ],
-
-            "camera": [phone.camera],
-            "memory": [phone.memory],
-            "display": [phone.display],
-            "resistance": [phone.resistance],
-            "security": [phone.security],
-
-            "warranty": [phone.warranty],
-
-            "brand_competition": [phone.brand_competition],
-            "product_competition": [phone.product_competition],
-        })
-        sm.add_constant(hypothetical, has_constant="add")
-        return hypothetical
-
-
-
-
-
-
-class AbsoluteLinearDemandModel:
+class DemandModel:
         
     #price_elasticity = self.model.params["log_price"]
 
@@ -258,21 +73,16 @@ class AbsoluteLinearDemandModel:
             product = training_set.pop(index)
             test_market = Market(training_set)
 
-            h_model = self.train(Market(training_set).households())
-            hh_model = self.train(Market(training_set).he_households())
-            c_model = self.train(Market(training_set).companies())
-            hc_model = self.train(Market(training_set).he_companies())
+            h, hh, c, hc = self.train(Market(training_set))
             
-            h_demand = self.predict(product, h_model)
-            hh_demand = self.predict(product, hh_model)
-            c_demand = self.predict(product, c_model)
-            hc_demand = self.predict(product, hc_model)
+            h_demand = self.predict(product)
+            hh_demand = self.predict(product)
+            c_demand = self.predict(product)
+            hc_demand = self.predict(product)
             total = h_demand+hh_demand+c_demand+hc_demand
 
-            self._report(product, total, h_demand, hh_demand, c_demand, hc_demand)
+            
 
-    def _report(self, product:Product, total, h_demand, hh_demand, c_demand, hc_demand):
-        pass
 
     def _make_model(self, products:list[TrainingPhone]):
         df = pd.DataFrame({
