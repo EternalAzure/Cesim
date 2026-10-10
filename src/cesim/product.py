@@ -128,7 +128,14 @@ class Product:
 
     def __eq__(self, value: object) -> bool:
         if not isinstance(value, self.__class__): return False
-        return self.name == value.name and self.brand == value.brand
+        return (self.name == value.name and 
+                self.brand == value.brand and
+                self.price == value.price and
+                self.performance == value.performance and
+                self.battery == value.battery and
+                self.design == value.design and
+                self.advertizing == value.advertizing
+                )
 
     def __ne__(self, value: object) -> bool:
         return not self.__eq__(value)
