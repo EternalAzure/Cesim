@@ -5,16 +5,12 @@ from pprint import pprint
 import pyfiglet
 import numpy as np
 import pandas as pd
+from rich.console import Console
 from simple_term_menu import TerminalMenu
 
-from .loader import load_markets
+from .terminal import intro
+from .analysis import Analysis
 from .simulation import Simulation
-from .product import Product, Phone
-from .demand_model import DemandModel
-from .market import Market, MarketHistory
-from .analyse import Analysis, DisplayPhone
-
-
 
 
 def calculate_line(x1:int, x2):
@@ -38,13 +34,11 @@ def main() -> None:
 
     options = ["Quit", "Analyse", "Simulate"]
     terminal_menu = TerminalMenu(options)
+    console = Console()
 
     while True:
         # -- INTRO -- #
-        os.system("clear")
-        ascii_banner = pyfiglet.figlet_format("TelePink!")
-        print(ascii_banner)
-        print("\rKeep calm and scroll on", end="\n\n\n\n", flush=True)
+        intro("Select task.", ["Home"])
 
         # -- MAIN LOOP -- #
         entry_index = terminal_menu.show()
