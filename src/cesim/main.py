@@ -1,16 +1,18 @@
-from pprint import pprint
+import os
 from typing import Any
+from pprint import pprint
 
-import xlrd
-import pandas as pd
+import pyfiglet
 import numpy as np
+import pandas as pd
+from simple_term_menu import TerminalMenu
 
-from .product import Product, Phone
-from .market import Market, MarketHistory
-from .analyse import Analyse, DisplayPhone
-from .simulation import Simulation
-from .demand_model import DemandModel
 from .loader import load_markets
+from .simulation import Simulation
+from .product import Product, Phone
+from .demand_model import DemandModel
+from .market import Market, MarketHistory
+from .analyse import Analysis, DisplayPhone
 
 
 
@@ -31,50 +33,31 @@ def calculate_line(x1:int, x2):
 
 
 def main() -> None:
-    rnd = int(input("Round: "))
+    analyse = Analysis()
+    simulate = Simulation()
 
-    data = load_markets()
-    analyse_asia = Analyse(data, rnd, "asia")
-    analyse_europe = Analyse(data, rnd, "europe")
+    options = ["Quit", "Analyse", "Simulate"]
+    terminal_menu = TerminalMenu(options)
 
+    while True:
+        # -- INTRO -- #
+        os.system("clear")
+        ascii_banner = pyfiglet.figlet_format("TelePink!")
+        print(ascii_banner)
+        print("\rKeep calm and scroll on", end="\n\n\n\n", flush=True)
 
-    # -- ALOITA TÄSTÄ -- #
-    # SUOSITUIMMAT TYYLIT
-    #analyse_asia.design()
+        # -- MAIN LOOP -- #
+        entry_index = terminal_menu.show()
+        if entry_index == 0:
+            exit(0)
+        elif entry_index == 1:
+            analyse.main()
+        elif entry_index == 2:
+            simulate.main()
 
-    # SUOSITUIMMAT OMINAISUUDET
-    #analyse_europe.feature()
-    #analyse_europe.design_feature()
-    
-    # TEHON JA AKUN SUHDE KYSYNTÄÄN
-    #analyse_asia.performance()
-    #analyse_asia.battery()
-    #analyse_europe.performance_per_euro()
-    #analyse_europe.battery_per_euro()
-
-    # HINNAN SUHDE KYSYNTÄÄN
-    #analyse_europe.price()
-    #analyse_europe.margin_x_sales()
-
-    # Löydä suhteellisen hinnan suhde kysyntään
-    #analyse_europe.cumulative()
-
-    # MARKKINOINNIN VAIKUTUS
-    #analyse_europe.all_awareness()
-    #analyse_europe.all_advertizing_x_sales_by_battery()
-    #analyse_europe.all_advertizing_x_sales_by_performance()
-
-    #analyse_europe.advertizing()
-    #analyse_europe.all_advertizing_x_sales_by_price()
-    #analyse_europe.advertizing_relook()
-    #analyse_europe.channel_investments()
-
-    # VOITOT
-    #analyse_europe.profit()
-    #analyse_europe.profit_x_specs()
 
     # TUOTEVERTAILU
-    #analyse_europe.compare.winners_across_segments()
+    #analyse_asia.compare.winners_across_segments()
     #analyse_europe.compare.high_price_segment()
     #analyse_europe.compare.mid_price_segment()
     #analyse_europe.compare.low_price_segment()
@@ -89,20 +72,8 @@ def main() -> None:
     #analyse_europe.price_deviance_demand()
 
 
-    # SIMULOI
-    sim = Simulation()
-    sim.test_model_europe(rnd)
-
-
-
-    #model.test(markets1)   # ValueError: shapes (1,18) and (17,) not aligned: 18 (dim 1) != 17 (dim 0)
-
-
-   
-
-
-
 
 
 if __name__ == "__main__":
     main()
+

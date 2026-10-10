@@ -44,7 +44,7 @@ class DemandModel:
         self.hc_model = self._make_model([self._product_to_training_data(p) for p in market.he_companies().products])
         return self.h_model, self.hh_model, self.c_model, self.hc_model
 
-    def predict(self, product:Product): # type: ignore
+    def predict(self, product:Product|Phone): # type: ignore
         """Predict demand for a product in a given market with model of your choice"""
         hypothetical = self._hypothetical(product)
 
@@ -112,7 +112,7 @@ class DemandModel:
 
         return sm.OLS(y, X).fit()
 
-    def _hypothetical(self, phone:Product):
+    def _hypothetical(self, phone:Product|Phone):
         hypothetical = pd.DataFrame({
             "log_price": [np.log(phone.price)],
             "battery": [phone.battery],

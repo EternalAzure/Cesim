@@ -262,7 +262,8 @@ def load_markets() -> MarketHistory:
     book3 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r03.xls")
     book4 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r04.xls")
     book5 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r05.xls")
-    books = [book1, book2, book3, book4, book5]
+    book6 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r06.xls")
+    books = [book1, book2, book3, book4, book5, book6]
 
     market_data = MarketHistory()
     for j, book in enumerate(books, 1):

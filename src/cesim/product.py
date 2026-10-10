@@ -1,10 +1,10 @@
 from dataclasses import dataclass
-from typing import Literal
+from typing import Literal, Optional
 
 @dataclass
 class Phone:
     price:float
-    variable_unit_cost:float
+    cost:float
 
     performance:int
     battery:int
@@ -19,13 +19,13 @@ class Phone:
     
     design:Literal["Classic", "Avant garde", "Sport"]
 
-    warranty:int
-    households_sales:float = 0
-    he_households_sales:float = 0
-    companies_sales:float = 0
-    he_companies_sales:float = 0
-    total_sales:float = 0
-    brand:str = "Pink"
+    warranty:int|None = None
+    households_sales:float|None = None
+    he_households_sales:float|None = None
+    companies_sales:float|None = None
+    he_companies_sales:float|None = None
+    total_sales:float|None = None
+    brand:str|None = None
 
 
 
@@ -58,7 +58,7 @@ class Product:
     name:str
     brand:str
     price:float
-    variable_unit_cost:float
+    cost:float
 
     # Sales
     households_sales:float
@@ -114,8 +114,8 @@ class Product:
         self.he_companies_sales = round(self.he_companies_sales, 2)
         self.total_sales = round(self.total_sales, 2)
         
-        self.margin = self.price - self.variable_unit_cost
-        self.margin_percent = self.margin / self.variable_unit_cost
+        self.margin = self.price - self.cost
+        self.margin_percent = self.margin / self.cost
         self.performance_per_euro = self.performance / self.price
         self.battery_per_euro = self.battery / self.price
         self.total_awareness = self.households_awareness + self.he_households_awareness + self.companies_awareness + self.he_companies_awareness

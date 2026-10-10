@@ -1,26 +1,71 @@
-import matplotlib.pyplot as plt
-import numpy as np
-from typing import Any, Literal
-import pandas as pd
+import os
 import textwrap
 import itertools
-from contextlib import suppress
 from pprint import pprint
+from typing import Any, Literal
+from contextlib import suppress
 
-from .market import Market, MarketHistory
+import pyfiglet
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from simple_term_menu import TerminalMenu
+
 from .product import Product
+from .loader import load_markets
+from .market import Market, MarketHistory
 
 
 
-class Analyse:
+class Analysis:
 
-    def __init__(self, market_history:MarketHistory, round:int, area:Literal["europe", "asia"]) -> None:
-        self.market_history: MarketHistory = market_history
-        self.market: Market = market_history.loc(round, area)
+    def __init__(self) -> None:
+        self.market_history: MarketHistory = load_markets()
+        self.round = 6
+        self.area = "europe"
+        self.market: Market = self.market_history.loc(self.round, self.area)
         self.title: str = f"Round {round}"
-        self.compare = Comparisons(self.market, round)
+        self.compare = Comparisons(self.market, self.round)
+
+    def main(self):
+        options = ["Quit", "Design", "Features", "Specs", "Price", "Advertizing", "Profit", "Competition", "Demand"]
+        terminal_menu = TerminalMenu(options)
+        
+        while True:
+            # -- INTRO -- #
+            os.system("clear")
+            ascii_banner = pyfiglet.figlet_format("TelePink!")
+            print(ascii_banner)
+            print("Keep calm and scroll on", end="\n\n")
+            print(f"Round: {self.round} Area: {self.area}", end="\n\n")
+
+            # -- ANALYSE LOOP -- #
+            plt.close("all")
+            entry_index = terminal_menu.show()
+            if entry_index == 0:
+                return
+            elif entry_index == 1:
+                self.design()
+            elif entry_index == 2:
+                self.feature()
+            elif entry_index == 3:
+                self.specs()
+            elif entry_index == 4:
+                self.price()
+            elif entry_index == 5:
+                self.advertizing()
+            elif entry_index == 6:
+                self.profit()
+            elif entry_index == 7:
+                self.competion()
+            elif entry_index == 8:
+                self.demand()
+            plt.draw()
+            plt.pause(0.001)
+            input("Press [enter] to continue.")
 
     # -- DESIGN -- #
+    
     def design(self):
 
         focus_groups = ("Households", "High-End Households", "Companies", "High-End Companies")
@@ -56,8 +101,6 @@ class Analyse:
         ax.set_title('Sales')
         ax.legend(loc='upper left', ncols=3)
         ax.set_ylim(0, 100)
-
-        plt.show()
 
     # -- FEATURES -- #
 
@@ -110,15 +153,11 @@ class Analyse:
         ax.legend(loc='upper left', ncols=3)
         ax.set_ylim(0, 120)
 
-        plt.show()
-
     def design_feature(self):
         self._plot_features_by_design_for_focus_group("H")
         self._plot_features_by_design_for_focus_group("HH")
         self._plot_features_by_design_for_focus_group("C")
         self._plot_features_by_design_for_focus_group("HC")
-
-        plt.show()
 
     def _plot_features_by_design_for_focus_group(self, group:Literal["H", "HH", "C", "HC"]):
         if group == "H":
@@ -165,8 +204,7 @@ class Analyse:
         self.group_performance("HH")
         self.group_performance("C")
         self.group_performance("HC")
-        plt.show()
-
+        
     def group_performance(self, group:Literal["H", "HH", "C", "HC"]):
         classics = self.market.classic().products
         avants = self.market.avant_garde().products
@@ -265,8 +303,7 @@ class Analyse:
         self.group_battery("HH")
         self.group_battery("C")
         self.group_battery("HC")
-        plt.show()
-
+        
     def group_battery(self, group:Literal["H", "HH", "C", "HC"]):
         classics = self.market.classic().products
         avants = self.market.avant_garde().products
@@ -366,8 +403,7 @@ class Analyse:
         self.group_ppe("HH")
         self.group_ppe("C")
         self.group_ppe("HC")
-        plt.show()
-
+        
     def all_ppe(self):
         """Performance per euro"""
         classics = self.market.classic().products
@@ -405,8 +441,6 @@ class Analyse:
         ax.set_xlabel("performance / price")
         ax.set_ylabel("sales k")
         ax.grid(True)
-
-        plt.show()
 
     def group_ppe(self, group:Literal["H", "HH", "C", "HC"]):
         classics = self.market.classic().products
@@ -492,8 +526,7 @@ class Analyse:
         self.group_bpe("HH")
         self.group_bpe("C")
         self.group_bpe("HC")
-        plt.show()
-
+        
     def all_bpe(self):
         """Battery per euro"""
         classics = self.market.classic().products
@@ -531,8 +564,6 @@ class Analyse:
         ax.set_xlabel("battery / price")
         ax.set_ylabel("sales k")
         ax.grid(True)
-
-        plt.show()
 
     def group_bpe(self, group:Literal["H", "HH", "C", "HC"]):
         """Battery per euro"""
@@ -621,8 +652,7 @@ class Analyse:
         self.group_price("HH")
         self.group_price("C")
         self.group_price("HC")
-        plt.show()
-
+        
     def all_price(self):
         classics = self.market.classic().products
         avants = self.market.avant_garde().products
@@ -738,8 +768,6 @@ class Analyse:
         p = np.poly1d(z)
         plt.plot(x, p(x), color="purple", linewidth=2, linestyle="--")
 
-        plt.show()
-
     # -- RELATIVE PRICE -- #
 
     def cumulative(self):
@@ -747,8 +775,7 @@ class Analyse:
         self.group_cumulative("HH")
         self.group_cumulative("C")
         self.group_cumulative("HC")
-        plt.show()
-
+        
     def group_cumulative(self, group:Literal["H", "HH", "C", "HC"]):
         if group == "H":
             low_perf = [p for p in self.market.households().products if p.performance <= self.market.stats.low_performance()]
@@ -840,6 +867,7 @@ class Analyse:
         ax.grid(True)
 
     # -- ADVERTIZING -- #
+
     def advertizing(self):
         #self.ad_effect_teams()
         #self.all_advertizing()
@@ -849,7 +877,6 @@ class Analyse:
         #self.advertizing_x_sales()
         #self.all_awareness()
         #self.awareness_x_sales()
-        plt.show()
         
     def all_advertizing(self):
         x_pink = [p.advertizing for p in self.market.brand().pink.products]
@@ -958,7 +985,6 @@ class Analyse:
         ax.set_xlabel("advertizing €")
         ax.set_ylabel("awareness k")
         ax.legend(loc="upper right")
-        plt.show()
         
     def all_advertizing_x_sales_by_price(self):
         low_price = self.market.price().low.products
@@ -1007,7 +1033,6 @@ class Analyse:
         high.set_label("high price")        #type: ignore
         fig.legend(loc="outside upper left")
         fig.tight_layout()
-        plt.show()
         
     def all_advertizing_x_sales_by_battery(self):
         low_battery = self.market.battery().low.products
@@ -1056,7 +1081,6 @@ class Analyse:
         high.set_label("high battery")        #type: ignore
         fig.legend(loc="outside upper left")
         fig.tight_layout()
-        plt.show()
         
     def all_advertizing_x_sales_by_performance(self):
         low_performance = self.market.performance().low.products
@@ -1105,8 +1129,7 @@ class Analyse:
         high.set_label("high perf")        #type: ignore
         fig.legend(loc="outside upper left")
         fig.tight_layout()
-        plt.show()
-
+        
     def awareness_x_sales(self):
         source = self.market.products.copy()
         source.sort(key=lambda p: p.total_awareness)
@@ -1212,8 +1235,7 @@ class Analyse:
         self.ad_relook_hc()
         self.ad_relook_hh()
         self.ad_relook_h()
-        plt.show()
-
+        
     def ad_relook_hc(self):
         source = self.market.products.copy()
         source.sort(key=lambda p: p.advertizing)
@@ -1521,8 +1543,7 @@ class Analyse:
         ax[1,1].set_xticks([1,2,3])
 
         fig.tight_layout()
-        plt.show()
-
+        
     def ad_effect_teams(self):
         brands = [b.lower() for b in self.market.brands]
         brands.sort()
@@ -1586,9 +1607,6 @@ class Analyse:
                 ax[1,j].set_xticks([i for i in range(1, self.market_history._nrounds+1)])
                 fig.tight_layout()
 
-
-        plt.show()
-
     def awareness_to_intentions_history_by_teams_and_groups(self):
         groups = ["households", "high_end_households", "companies", "high_end_companies"]
         for group in groups:
@@ -1636,9 +1654,6 @@ class Analyse:
                 ax[1,j].set_xticks([i for i in range(1, self.market_history._nrounds+1)])
                 fig.tight_layout()
 
-
-        plt.show()
-
     def _money_to_awareness(self, products:list[Product]):
         x = [p.advertizing for p in products]
         y = [p.total_awareness for p in products]
@@ -1671,8 +1686,6 @@ class Analyse:
         slope = self._calc_k(x[0], x[-1], p(x)[0], p(x)[-1])
         return slope
 
-
-    
     def _calc_k(self, x1, x2, y1, y2):
         """kulmakerroin"""
         if x1 == x2: return np.nan
@@ -1680,13 +1693,13 @@ class Analyse:
         return k
   
     # -- CHANNEL INVESTMENTS -- #
+
     def channel_investments(self):
         self.all_channel_investments()
         self.channel_investments_hc()
         self.channel_investments_hh()
         self.channel_investments_h()
-        plt.show()
-
+        
     def all_channel_investments(self):
         source = self.market.products
 
@@ -1705,7 +1718,7 @@ class Analyse:
         p = np.poly1d(z)
         plt.plot(x, p(x), color="purple", linewidth=2, linestyle="--")
 
-        plt.show()
+        
 
         # x  600, y 216.5
         # x 1400, y 231.4
@@ -1935,37 +1948,52 @@ class Analyse:
     # -- PROFIT -- #
 
     def profit(self):
-    
-        source = self.market.products.copy()
+        def _axes(products:list):
+            products.sort(key=lambda p: p.price)
+            y = [p.margin * p.total_sales for p in products]
+            x_price = [p.price for p in products]
 
-        source.sort(key=lambda p: p.price)
-        y = [p.margin * p.total_sales for p in source]
-        x_price = [p.price for p in source]
+            products.sort(key=lambda p: p.total_sales)
+            x_sales = [p.total_sales for p in products]
 
-        source.sort(key=lambda p: p.total_sales)
-        y = [p.margin * p.total_sales for p in source]
-        x_sales = [p.total_sales for p in source]
+            products.sort(key=lambda p: p.margin)
+            x_margin = [p.margin for p in products]
 
-        source.sort(key=lambda p: p.margin)
-        y = [p.margin * p.total_sales for p in source]
-        x_margin = [p.margin for p in source]
-
-        source.sort(key=lambda p: abs(p.price - self.market.stats.average_price()))
-        y = [p.margin * p.total_sales for p in source]
-        x_deviance = [abs(p.price - self.market.stats.average_price()) for p in source]
-
-
+            products.sort(key=lambda p: abs(p.price - self.market.stats.average_price()))
+            x_deviance = [abs(p.price - self.market.stats.average_price()) for p in products]
+            return x_price, x_sales, x_margin, x_deviance, y
+        
         fig, ax = plt.subplots(2,2)
         fig.suptitle(self.title)
+        brands = ["Green", "Orange", "Pink", "Red", "Grey", "Blue"]
+        for brand in brands:
+            products = self.market.brand()[brand].products
+            x_price, x_sales, x_margin, x_deviance, y = _axes(products)
 
-        ax[0,0].plot(x_price, y); ax[0,0].set_title("Price"); ax[0,0].set_ylabel("profit"); ax[0,0].set_xlabel("price €")
-        ax[0,1].plot(x_sales, y); ax[0,1].set_title("Sales"); ax[0,1].set_ylabel("profit"); ax[0,1].set_xlabel("sales k")
-        ax[1,0].plot(x_margin, y); ax[1,0].set_title("Margin"); ax[1,0].set_ylabel("profit"); ax[1,0].set_xlabel("margin €")
-        ax[1,1].plot(x_deviance, y); ax[1,1].set_title("Deviance"); ax[1,1].set_ylabel("profit"); ax[1,1].set_xlabel("deviance from median price €")
+            ax[0,0].scatter(x_price, y, c=brand); ax[0,0].set_title("Price"); ax[0,0].set_ylabel("profit"); ax[0,0].set_xlabel("price €")
+            ax[0,1].scatter(x_sales, y, c=brand); ax[0,1].set_title("Sales"); ax[0,1].set_ylabel("profit"); ax[0,1].set_xlabel("sales k")
+            ax[1,0].scatter(x_margin, y, c=brand); ax[1,0].set_title("Margin"); ax[1,0].set_ylabel("profit"); ax[1,0].set_xlabel("margin €")
+            ax[1,1].scatter(x_deviance, y, c=brand); ax[1,1].set_title("Deviance"); ax[1,1].set_ylabel("profit"); ax[1,1].set_xlabel("deviance from median price €")
+
+        x_price, x_sales, x_margin, x_deviance, y = _axes(self.market.products)
+        z = np.polyfit(x_price, y,1)
+        p = np.poly1d(z)
+        ax[0,0].plot(x_price, p(x_price))
+
+        z = np.polyfit(x_sales, y,1)
+        p = np.poly1d(z)
+        ax[0,1].plot(x_sales, p(x_sales))
+
+        z = np.polyfit(x_margin, y,1)
+        p = np.poly1d(z)
+        ax[1,0].plot(x_margin, p(x_margin))
+
+        z = np.polyfit(x_deviance, y,1)
+        p = np.poly1d(z)
+        ax[1,1].plot(x_deviance, p(x_deviance))
 
         fig.tight_layout()
-        plt.show()
-
+    
     def profit_x_specs(self):
         source = self.market.products
 
@@ -1989,9 +2017,9 @@ class Analyse:
         ax[1].plot(x, y)
 
         fig.tight_layout()
-        plt.show()
-
+        
     # -- COMPETITION -- #
+
     def competion(self, 
                   camera:bool=False, memory:bool=False, display:bool=False, resistance:bool=False, security:bool=False, 
                   classic:bool=False, avant_garde:bool=False, sport:bool=False):
@@ -2048,8 +2076,6 @@ class Analyse:
         ax2.plot(x_price, y_total_sales, color="grey", label="Total sales", linestyle="--")
         ax2.set_ylabel("sales k")
         ax2.legend(loc="upper left")
-
-        plt.show()
 
     def competion_stack_by_team(self, 
                   camera:bool=False, memory:bool=False, display:bool=False, resistance:bool=False, security:bool=False, 
@@ -2116,9 +2142,10 @@ class Analyse:
         ax2.set_ylabel("sales k")
         ax2.legend(loc="upper left")
 
-        plt.show()
-
     # -- DEMAND -- #
+
+    def demand(self):
+        pass
 
     def get_price_deviance_demand(self, 
                   camera:bool=False, memory:bool=False, display:bool=False, resistance:bool=False, security:bool=False, 
@@ -2431,8 +2458,7 @@ class Analyse:
         axhc.plot(x, p(x))
 
         fig.tight_layout()
-        plt.show()
-
+        
     def price_deviance_demand(self, 
                   camera:bool=False, memory:bool=False, display:bool=False, resistance:bool=False, security:bool=False, 
                   classic:bool=False, avant_garde:bool=False, sport:bool=False):
@@ -2553,7 +2579,7 @@ class Analyse:
         ax[1,1].set_yticks([])
 
         fig.tight_layout()
-        plt.show()
+        
 
 
 class DisplayPhone:
