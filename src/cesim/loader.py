@@ -257,12 +257,12 @@ def read_product_asia(sheet, coln:int) -> Product:
 
 
 def load_markets() -> MarketHistory:
-    book1 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r01.xls")
-    book2 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r02.xls")
-    book3 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r03.xls")
-    book4 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r04.xls")
-    book5 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r05.xls")
-    book6 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/src/cesim/results-r06.xls")
+    book1 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/data/results-r01.xls")
+    book2 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/data/results-r02.xls")
+    book3 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/data/results-r03.xls")
+    book4 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/data/results-r04.xls")
+    book5 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/data/results-r05.xls")
+    book6 = xlrd.open_workbook("/home/miisu/Desktop/repos/cesim/data/results-r06.xls")
     books = [book1, book2, book3, book4, book5, book6]
 
     market_data = MarketHistory()
