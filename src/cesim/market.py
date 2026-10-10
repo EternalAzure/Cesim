@@ -54,9 +54,9 @@ class MarketHistory:
 
     def loc(self, row:int, column:str) -> Market:
         row -= 1
-        if column == "europe":
+        if column.lower() == "europe":
             return copy.deepcopy(self.europe[row])
-        if column == "asia":
+        if column.lower() == "asia":
             return copy.deepcopy(self.asia[row])
         raise ValueError()
 
