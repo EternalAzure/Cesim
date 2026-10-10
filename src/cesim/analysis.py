@@ -9,8 +9,10 @@ import pyfiglet
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from rich.console import Console
 from simple_term_menu import TerminalMenu
 
+from .terminal import intro
 from .product import Product
 from .loader import load_markets
 from .market import Market, MarketHistory
@@ -28,16 +30,12 @@ class Analysis:
         self.compare = Comparisons(self.market, self.round)
 
     def main(self):
-        options = ["Quit", "Design", "Features", "Specs", "Price", "Advertizing", "Profit", "Competition", "Demand"]
+        options = ["Back", "Design", "Features", "Specs", "Price", "Advertizing", "Profit", "Competition", "Demand"]
         terminal_menu = TerminalMenu(options)
         
         while True:
             # -- INTRO -- #
-            os.system("clear")
-            ascii_banner = pyfiglet.figlet_format("TelePink!")
-            print(ascii_banner)
-            print("Keep calm and scroll on", end="\n\n")
-            print(f"Round: {self.round} Area: {self.area}", end="\n\n")
+            intro("Select what to analyse.", ["Home", "Analysis"])
 
             # -- ANALYSE LOOP -- #
             plt.close("all")
@@ -60,12 +58,9 @@ class Analysis:
                 self.competion()
             elif entry_index == 8:
                 self.demand()
-            plt.draw()
-            plt.pause(0.001)
-            input("Press [enter] to continue.")
 
     # -- DESIGN -- #
-    
+
     def design(self):
 
         focus_groups = ("Households", "High-End Households", "Companies", "High-End Companies")
@@ -101,6 +96,11 @@ class Analysis:
         ax.set_title('Sales')
         ax.legend(loc='upper left', ncols=3)
         ax.set_ylim(0, 100)
+
+        plt.draw()
+        plt.pause(0.001)
+        if input("Close current slides [Y/n]: ").lower() != "n":
+            plt.close("all")
 
     # -- FEATURES -- #
 
@@ -153,6 +153,11 @@ class Analysis:
         ax.legend(loc='upper left', ncols=3)
         ax.set_ylim(0, 120)
 
+        plt.draw()
+        plt.pause(0.001)
+        if input("Close current slides [Y/n]: ").lower() != "n":
+            plt.close("all")        
+
     def design_feature(self):
         self._plot_features_by_design_for_focus_group("H")
         self._plot_features_by_design_for_focus_group("HH")
@@ -198,6 +203,23 @@ class Analysis:
         ax.set_ylim(0, y_limit*1.2)
 
     # -- PERFORMANCE & BATTERY -- #
+    
+    def specs(self):
+        options = ["Quit", "Performance", "Performance per €", "Battery", "Battery per €"]
+        terminal_menu = TerminalMenu(options)
+
+        while True:
+            entry_index = terminal_menu.show()
+            if entry_index == 0: return
+            if entry_index == 1: self.performance()
+            if entry_index == 2: self.performance_per_euro()
+            if entry_index == 3: self.battery()
+            if entry_index == 4: self.battery_per_euro()
+            
+            plt.draw()
+            plt.pause(0.001)
+            if input("Close current slides [Y/n]: ").lower() != "n":
+                plt.close("all")
 
     def performance(self):
         self.group_performance("H")
@@ -292,7 +314,7 @@ class Analysis:
 
         ax.legend()
         ax.set_title(f"{group} Performance")
-        ax.set_xlabel("performance per €")
+        ax.set_xlabel("performance")
         ax.set_ylabel("sales k")
         ax.set_ylim(0, y_limit*1.04)
         ax.set_xlim(self.market.stats.min_performance(), self.market.stats.max_performance())
@@ -397,7 +419,7 @@ class Analysis:
         ax2.set_ylim(0)
 
     # -- SPECS PER EURO -- #
-    
+
     def performance_per_euro(self):
         self.group_ppe("H")
         self.group_ppe("HH")
